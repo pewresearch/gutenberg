@@ -5,6 +5,7 @@
 	flex-basis: 100%;
 	box-sizing: border-box;
 
+	&[hidden],
 	&:empty {
 		display: none !important;
 	}

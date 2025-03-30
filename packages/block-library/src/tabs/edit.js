@@ -10,7 +10,6 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 	withColors,
-	InnerBlocks,
 } from '@wordpress/block-editor';
 
 /**
@@ -18,7 +17,7 @@ import {
  */
 import Controls from './controls';
 import useColorSupports from './use-color-supports';
-import { TabFill } from '../tab/slotfill';
+import TabsList from './tabs-list';
 
 const TABS_TEMPLATE = [
 	[ 'core/tab', { label: 'Tab 1', slug: 'tab-1' } ],
@@ -101,12 +100,8 @@ function Edit( {
 				} }
 			/>
 			<div { ...blockProps }>
+				<TabsList tabsClientId={ clientId } />
 				{ innerBlockProps.children }
-				<TabFill tabsClientId={ clientId }>
-					<li className="wp-block-tabs__tab-item__inserter">
-						<InnerBlocks.ButtonBlockAppender />
-					</li>
-				</TabFill>
 			</div>
 		</>
 	);
