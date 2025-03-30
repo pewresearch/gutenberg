@@ -1,0 +1,15 @@
+.wp-block-tab {
+	padding: 1em 0;
+	max-width: 100%;
+	flex-grow: 1;
+	flex-basis: 100%;
+	box-sizing: border-box;
+
+	&:empty {
+		display: none !important;
+	}
+
+	& > *:first-child {
+		margin-top: 0;
+	}
+}
