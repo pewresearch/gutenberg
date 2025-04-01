@@ -1,12 +1,7 @@
 /**
  * WordPress dependencies
  */
-import {
-	store,
-	getContext,
-	getElement,
-	withSyncEvent,
-} from '@wordpress/interactivity';
+import { store, getContext, withSyncEvent } from '@wordpress/interactivity';
 
 // Interactivy store for the tabs block.
 const { state, actions } = store( 'core/tabs', {
@@ -36,7 +31,7 @@ const { state, actions } = store( 'core/tabs', {
 		 * @type {false|string}
 		 */
 		get tabindexLabelAttribute() {
-			return state.isActiveTab ? false : '-1';
+			return state.isActiveTab ? -1 : 0;
 		},
 		/**
 		 * The value of the tabindex attribute for the tab panel.
@@ -55,43 +50,12 @@ const { state, actions } = store( 'core/tabs', {
 		 */
 
 		handleTabKeyDown: withSyncEvent( ( event ) => {
-			const { key, target } = event;
-
-			if ( ! target ) {
-				return;
-			}
-
-			const { ref } = getElement();
-			const container = ref?.closest( '.wp-block-tabs' );
-			const tabs = Array.from(
-				container?.querySelectorAll( '.wp-block-tabs__tab-label' ) || []
-			);
-
-			const currentIndex = tabs.indexOf( target );
-			let nextIndex = currentIndex;
-
-			switch ( key ) {
-				case 'ArrowRight':
-					event.stopPropagation();
-					event.preventDefault();
-
-					// Loop back to the first tab if the last tab is reached.
-					nextIndex = ( currentIndex + 1 ) % tabs.length;
-					actions.setActiveTab( nextIndex );
-					tabs[ nextIndex ]?.focus();
-					break;
-				case 'ArrowLeft':
-					event.stopPropagation();
-					event.preventDefault();
-
-					// Loop back to the last tab if the first tab is reached.
-					nextIndex =
-						( currentIndex - 1 + tabs.length ) % tabs.length;
-					actions.setActiveTab( nextIndex );
-					tabs[ nextIndex ]?.focus();
-					break;
-				default:
-					break;
+			// If this is the enter key then lets get the tab index from context and set the active tab to that index.
+			if ( event.key === 'Enter' ) {
+				const tabIndex = state.tabIndex;
+				if ( tabIndex !== null ) {
+					actions.setActiveTab( tabIndex );
+				}
 			}
 		} ),
 		/**

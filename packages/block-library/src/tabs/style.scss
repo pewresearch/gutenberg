@@ -37,7 +37,7 @@
 			background-color: var(--custom-tab-background-color, transparent);
 			color: var(--custom-tab-text-color, black);
 			&:focus {
-				outline: none;
+				// outline: none;
 			}
 			&:hover {
 				opacity: 1;

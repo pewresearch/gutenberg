@@ -24,7 +24,6 @@ function generate_tab( $label, $content ) {
 		'core/tab',
 		array(
 			'label'    => $label,
-			'slug'     => sanitize_title( $label ),
 		),
 		$parsed_content,
 		$inner_html,

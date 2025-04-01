@@ -92,7 +92,6 @@ export default function Controls( {
 								tabBackgroundColor?.color ??
 								customTabBackgroundColor,
 							onColorChange: ( value ) => {
-								console.log( 'Tab Inactive Background', value );
 								setTabBackgroundColor( value );
 								setAttributes( {
 									customTabBackgroundColor: value,
