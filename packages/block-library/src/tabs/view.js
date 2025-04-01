@@ -53,7 +53,6 @@ const { state, actions } = store( 'core/tabs', {
 		 *
 		 * @param {KeyboardEvent} event The keydown event.
 		 */
-
 		handleTabKeyDown: withSyncEvent( ( event ) => {
 			// If this is the enter key then lets get the tab index from context and set the active tab to that index.
 			if ( event.key === 'Enter' ) {
@@ -95,7 +94,8 @@ const { state, actions } = store( 'core/tabs', {
 			const hash = window.location.hash;
 			const tabId = hash.replace( '#', '' );
 			const tabIndex = tabsList.findIndex( ( t ) => t.id === tabId );
-			if ( tabIndex !== null ) {
+			// Check if tabIndex is a positive number.
+			if ( tabIndex >= 0 ) {
 				actions.setActiveTab( tabIndex );
 			}
 		},
