@@ -1,12 +1,14 @@
 <?php
 /**
- * Constructs a string of CSS variables for the tabs block.
+ * Constructs a string of CSS color variables for the tabs block.
  * - customTabBackgroundColor - The background color of the tabs.
  * - customTabHoverColor - The hover background color of the tabs.
  * - customTabActiveColor - The active background color of the tabs.
  * - customTabTextColor - The text color of the tabs.
  * - customTabHoverTextColor - The hover text color of the tabs.
  * - customTabActiveTextColor - The active text color of the tabs.
+ *
+ * @since 9.22.0
  *
  * @param array $attributes Block attributes.
  * @return string A string of CSS variables.
@@ -40,6 +42,14 @@ function block_core_tabs_generate_color_variables( $attributes ) {
 	return $style_string;
 }
 
+/**
+ * Generates a string of CSS block gap variables for the tabs block.
+ *
+ * @since 9.22.0
+ *
+ * @param array $attributes Block attributes.
+ * @return string A string of CSS variables.
+ */
 function block_core_tabs_generate_gap_styles( $attributes ) {
 	if ( ! array_key_exists( 'style', $attributes ) || ! is_array( $attributes['style'] ) ) {
 		return '--wp--style--tabs-gap-default: 0.5em;';
@@ -86,6 +96,8 @@ function block_core_tabs_generate_gap_styles( $attributes ) {
 /**
  * Generates a usable list of tab attributes from the innerblocks of core/tabs.
  *
+ * @since 9.22.0
+ *
  * @param array $innerblocks The innerblocks of the tabs block.
  * @return array The list of tabs.
  */
@@ -116,6 +128,8 @@ function block_core_tabs_generate_tabs_list_from_innerblocks( $innerblocks = arr
 
 /**
  * Render the block
+ *
+ * @since 9.22.0
  *
  * @param array    $attributes Block attributes.
  * @param string   $content Block content.
@@ -176,7 +190,7 @@ function render_block_core_tabs( $attributes, $content, $block ) {
 
 	// Splice the tabs_template into the updated_content.
 	$list_start_pos = strpos( $content, '<ul class="tabs__list"' );
-	if ( $list_start_pos !== false ) {
+	if ( false !== $list_start_pos ) {
 		$list_open_end    = strpos( $content, '>', $list_start_pos ) + 1;
 		$list_close_start = strpos( $content, '</ul>', $list_open_end );
 

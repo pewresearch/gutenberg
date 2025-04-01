@@ -2,7 +2,7 @@
 /**
  * Returns typography classnames depending on whether there are named font sizes/families.
  *
- * @since 6.1.0
+ * @since 9.22.0
  *
  * @param array $attributes The block attributes.
  * @return string The typography color classnames to be applied to the block elements.
@@ -27,7 +27,7 @@ function block_core_tab_get_typography_classes( $attributes ) {
  * Returns typography styles to be included in an HTML style tag.
  * This excludes text-decoration, which is applied only to the label and button elements of the search block.
  *
- * @since 6.1.0
+ * @since 9.22.0
  *
  * @param array $attributes The block attributes.
  * @return string A string of typography CSS declarations.
@@ -78,14 +78,13 @@ function block_core_tab_get_typography_styles( $attributes ) {
  * Render the core/tab block.
  * This function adds Interactivity API directives to the tabpanel.
  *
- * @since 6.1.0
+ * @since 9.22.0
  *
  * @param array    $attributes Block attributes.
  * @param string   $content    Block content.
- * @param WP_Block $block      WP_Block object.
  * @return string
  */
-function render_block_core_tab( $attributes, $content, $block ) {
+function render_block_core_tab( $attributes, $content ) {
 	$tag_processor = new WP_HTML_Tag_Processor( $content );
 	$tag_processor->next_tag( array( 'class_name' => 'wp-block-tab' ) );
 
@@ -110,7 +109,7 @@ function render_block_core_tab( $attributes, $content, $block ) {
 /**
  * Registers the `core/tab` block on the server.
  *
- * @since 6.1.0
+ * @since 9.22.0
  */
 function register_block_core_tab() {
 	register_block_type_from_metadata(
