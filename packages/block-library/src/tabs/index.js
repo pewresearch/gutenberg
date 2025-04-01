@@ -20,5 +20,3 @@ export const settings = {
 };
 
 export const init = () => initBlock( { name, metadata, settings } );
-
-// register( store );
