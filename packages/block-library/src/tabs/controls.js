@@ -14,8 +14,8 @@ export default function Controls( {
 	attributes,
 	setAttributes,
 	clientId,
-	tabBackgroundColor,
-	setTabBackgroundColor,
+	tabInactiveColor,
+	setTabInactiveColor,
 	tabHoverColor,
 	setTabHoverColor,
 	tabActiveColor,
@@ -28,7 +28,7 @@ export default function Controls( {
 	setTabHoverTextColor,
 } ) {
 	const {
-		customTabBackgroundColor,
+		customTabInactiveColor,
 		customTabActiveColor,
 		customTabHoverColor,
 		customTabTextColor,
@@ -89,12 +89,12 @@ export default function Controls( {
 						{
 							label: __( 'Tab Inactive Background' ),
 							colorValue:
-								tabBackgroundColor?.color ??
-								customTabBackgroundColor,
+								tabInactiveColor?.color ??
+								customTabInactiveColor,
 							onColorChange: ( value ) => {
-								setTabBackgroundColor( value );
+								setTabInactiveColor( value );
 								setAttributes( {
-									customTabBackgroundColor: value,
+									customTabInactiveColor: value,
 								} );
 							},
 						},

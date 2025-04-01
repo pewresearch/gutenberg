@@ -35,8 +35,8 @@ function Edit( {
 	clientId,
 	attributes,
 	setAttributes,
-	tabBackgroundColor,
-	setTabBackgroundColor,
+	tabInactiveColor,
+	setTabInactiveColor,
 	tabHoverColor,
 	setTabHoverColor,
 	tabActiveColor,
@@ -90,8 +90,8 @@ function Edit( {
 					clientId,
 					attributes,
 					setAttributes,
-					tabBackgroundColor,
-					setTabBackgroundColor,
+					tabInactiveColor,
+					setTabInactiveColor,
 					tabHoverColor,
 					setTabHoverColor,
 					tabActiveColor,
@@ -122,7 +122,7 @@ function Edit( {
 }
 
 export default withColors(
-	'tabBackgroundColor',
+	'tabInactiveColor',
 	'tabHoverColor',
 	'tabActiveColor',
 	'tabTextColor',

@@ -1,6 +1,6 @@
 const useColorSupports = ( attributes ) => {
 	const {
-		customTabBackgroundColor,
+		customTabInactiveColor,
 		customTabHoverColor,
 		customTabActiveColor,
 		customTabTextColor,
@@ -8,14 +8,13 @@ const useColorSupports = ( attributes ) => {
 		customTabHoverTextColor,
 	} = attributes;
 	const styles = {};
-	if ( customTabBackgroundColor ) {
-		if ( customTabBackgroundColor.slug ) {
+	if ( customTabInactiveColor ) {
+		if ( customTabInactiveColor.slug ) {
 			styles[
-				'--custom-tab-background-color'
-			] = `var( --wp--preset--color--${ customTabBackgroundColor.slug } );`;
+				'--custom-tab-inactive-color'
+			] = `var( --wp--preset--color--${ customTabInactiveColor.slug } );`;
 		} else {
-			styles[ '--custom-tab-background-color' ] =
-				customTabBackgroundColor;
+			styles[ '--custom-tab-inactive-color' ] = customTabInactiveColor;
 		}
 	}
 	if ( customTabActiveColor ) {

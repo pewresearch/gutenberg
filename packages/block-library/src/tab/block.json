@@ -17,6 +17,10 @@
 		"anchor": true,
 		"html": false,
 		"reusable": false,
+		"layout": {
+			"type": "constrained",
+			"allowEditing": false
+		},
 		"typography": {
 			"fontSize": true,
 			"__experimentalFontFamily": true,

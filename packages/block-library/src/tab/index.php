@@ -93,17 +93,10 @@ function render_block_core_tab( $attributes, $content, $block ) {
 	$tab_id = $tag_processor->get_attribute('id');
 
 	$tag_processor->set_attribute( 'role', 'tabpanel' );
-
-	$tag_processor->set_attribute( 'data-wp-context', wp_json_encode(
-		array(
-			'tab' => array(
-				'id' => $tab_id,
-			),
-		)
-	) );
-	$tag_processor->set_attribute( 'data-wp-bind--data-tab-id', 'context.tabId' );
+	$tag_processor->set_attribute( 'aria-labelledby', $tab_id );
+	$tag_processor->set_attribute( 'data-wp-tab-id', $tab_id );
 	$tag_processor->set_attribute( 'data-wp-bind--hidden', '!state.isActiveTab' );
-	$tag_processor->set_attribute( 'data-wp-bind--tabindex', 'state.tabindexPanelAttribute' );
+	$tag_processor->set_attribute( 'data-wp-bind--tabindex', 'state.tabIndexAttribute' );
 
 	$content = $tag_processor->get_updated_html();
 

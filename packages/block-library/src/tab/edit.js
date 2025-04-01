@@ -17,7 +17,7 @@ import {
 } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useRef, useEffect } from '@wordpress/element';
-
+import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies
  */
@@ -40,11 +40,12 @@ export default function Edit( {
 	isSelected,
 	setAttributes,
 } ) {
-	const { anchor, label, slug } = attributes;
+	const { anchor, label } = attributes;
 	const { selectBlock } = useDispatch( blockEditorStore );
 	const labelRef = useRef();
 
-	// Add useEffect to focus the RichText when no label exists
+	// Focus the label RichText component when no label exists
+	// and when the block is mounted.
 	useEffect( () => {
 		if ( ! label && labelRef.current ) {
 			const timeoutId = setTimeout( () => {
@@ -137,7 +138,10 @@ export default function Edit( {
 	const innerBlocksRef = useRef( null );
 
 	// Use a custom anchor, if set. Otherwise fall back to the slug generated from the label text.
-	const tabPanelId = useMemo( () => anchor || slug, [ anchor, slug ] );
+	const tabPanelId = useMemo(
+		() => anchor || slugFromLabel( label, blockIndex ),
+		[ anchor, label, blockIndex ]
+	);
 	const tabLabelId = useMemo( () => `${ tabPanelId }--tab`, [ tabPanelId ] );
 
 	const tabItemColorProps = useColorProps( tabsAttributes );
@@ -197,7 +201,6 @@ export default function Edit( {
 							role="tab"
 							tabIndex="0"
 							onClick={ ( event ) => {
-								// Because this is not a "real link" and rather a "tab" we need to prevent the default action.
 								event.preventDefault();
 								selectBlock( clientId );
 							} }
@@ -210,9 +213,10 @@ export default function Edit( {
 							<RichText
 								ref={ labelRef }
 								tagName="span"
+								allowedFormats={ [] }
 								withoutInteractiveFormatting
-								value={ label }
-								placeholder={ __( 'Add label…' ) }
+								placeholder={ __( 'Add tab label…' ) }
+								value={ decodeEntities( label ) }
 								onChange={ ( value ) =>
 									setAttributes( {
 										label: value,

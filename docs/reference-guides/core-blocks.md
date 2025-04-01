@@ -897,6 +897,16 @@ Add white space between blocks and customize its height. ([Source](https://githu
 -	**Supports:** anchor, interactivity (clientNavigation), spacing (margin)
 -	**Attributes:** height, width
 
+## Tab
+
+Content for a tab in a tabbed interface. ([Source](https://github.com/WordPress/gutenberg/tree/trunk/packages/block-library/src/tab))
+
+-	**Name:** core/tab
+-	**Category:** design
+-	**Parent:** core/tabs
+-	**Supports:** anchor, layout (type, ~~allowEditing~~), typography (fontSize), ~~html~~, ~~reusable~~
+-	**Attributes:** label
+
 ## Table
 
 Create structured content in rows and columns to display information. ([Source](https://github.com/WordPress/gutenberg/tree/trunk/packages/block-library/src/table))
@@ -915,6 +925,16 @@ Summarize your post with a list of headings. Add HTML anchors to Heading blocks 
 -	**Category:** design
 -	**Supports:** color (background, gradients, link, text), interactivity (clientNavigation), spacing (margin, padding), typography (fontSize, lineHeight), ~~html~~
 -	**Attributes:** headings, maxLevel, onlyIncludeCurrentPage
+
+## Tabs
+
+Display content in a tabbed interface to help users navigate detailed content with ease. ([Source](https://github.com/WordPress/gutenberg/tree/trunk/packages/block-library/src/tabs))
+
+-	**Name:** core/tabs
+-	**Category:** design
+-	**Allowed Blocks:** core/tab
+-	**Supports:** align, color (~~background~~, ~~text~~), interactivity, spacing (blockGap, margin, ~~padding~~), typography (fontFamily, fontSize), ~~html~~
+-	**Attributes:** activeTabIndex, customTabActiveColor, customTabActiveTextColor, customTabHoverColor, customTabHoverTextColor, customTabInactiveColor, customTabTextColor, orientation, tabActiveColor, tabActiveTextColor, tabHoverColor, tabHoverTextColor, tabInactiveColor, tabTextColor
 
 ## Tag Cloud
 

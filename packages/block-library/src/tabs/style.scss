@@ -10,20 +10,14 @@
 	}
 
 	.tabs__list {
-		flex-grow: 1;
-		flex-basis: 100%;
-	}
-
-	.tabs__list {
 		display: flex;
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		overflow-x: auto;
 		align-items: flex-end;
+		flex-grow: 1;
+		flex-basis: 100%;
 		gap: var(--wp--style--unstable-tabs-list-gap, var(--wp--style--tabs-gap-default));
-
-		border-bottom: 1px solid var(--custom-tab-active-color, black);
 
 		.tabs__tab-label {
 			box-sizing: border-box;
@@ -34,21 +28,28 @@
 			padding: var(--wp--preset--spacing--20) var(--wp--preset--spacing--30);
 			text-decoration: none;
 			cursor: pointer;
-			background-color: var(--custom-tab-background-color, transparent);
-			color: var(--custom-tab-text-color, black);
+			background-color: var(--custom-tab-inactive-color, transparent);
+			color: var(--custom-tab-text-color, #000);
 			&:focus {
-				// outline: none;
+				outline: none;
 			}
 			&:hover {
 				opacity: 1;
 				background-color: var(--custom-tab-hover-color, #eaeaea);
-				color: var(--custom-tab-hover-text-color, black);
+				color: var(--custom-tab-hover-text-color, #000);
 			}
 			&[aria-selected="true"] {
 				opacity: 1;
-				background-color: var(--custom-tab-active-color, black);
-				color: var(--custom-tab-active-text-color, white);
+				background-color: var(--custom-tab-active-color, #000);
+				color: var(--custom-tab-active-text-color, #fff);
 			}
+		}
+	}
+
+	&:not(.is-vertical) {
+		.tabs__list {
+			overflow-x: auto;
+			border-bottom: 1px solid var(--custom-tab-active-color, #000);
 		}
 	}
 
@@ -58,9 +59,9 @@
 			flex-grow: 0;
 			flex-direction: column;
 			max-width: 30%;
+			border-right: 1px solid var(--custom-tab-active-color, #000);
 			border-bottom: none;
-			border-right: 1px solid var(--custom-tab-active-color, black);
-			border-bottom: none ;
+			overflow-x: hidden;
 		}
 		.tabs__list-item,
 		.tabs__tab-label {
@@ -77,42 +78,44 @@
 
 // Outline style.
 .wp-block-tabs.is-style-outline {
-	.tabs__list {
-		border-bottom: 1px solid var(--custom-tab-active-color, black);
+	&:not(.is-vertical) {
+		.tabs__list {
+			border-bottom: 1px solid var(--custom-tab-active-color, #000);
+		}
+	}
+	&.is-vertical {
+		.tabs__tab-label {
+			border-right: none;
+			&:hover {
+				border-bottom-color: var(--custom-tab-hover-color, #000);
+			}
+			&[aria-selected="true"] {
+				border-bottom-color: var(--custom-tab-active-color, #000);
+			}
+		}
 	}
 	.tabs__tab-label {
-		border-top: 1px solid var(--custom-tab-background-color, transparent);
-		border-left: 1px solid var(--custom-tab-background-color, transparent);
-		border-right: 1px solid var(--custom-tab-background-color, transparent);
-		color: var(--custom-tab-text-color, black);
+		border-top: 1px solid var(--custom-tab-inactive-color, transparent);
+		border-left: 1px solid var(--custom-tab-inactive-color, transparent);
+		border-right: 1px solid var(--custom-tab-inactive-color, transparent);
+		border-bottom: 1px solid var(--custom-tab-inactive-color, transparent);
+		color: var(--custom-tab-text-color, #000);
 		background-color: transparent;
 		&:hover {
-			border-top-color: var(--custom-tab-hover-color, black);
-			border-left-color: var(--custom-tab-hover-color, black);
-			border-right-color: var(--custom-tab-hover-color, black);
-			color: var(--custom-tab-hover-text-color, black);
+			border-top-color: var(--custom-tab-hover-color, #000);
+			border-left-color: var(--custom-tab-hover-color, #000);
+			border-right-color: var(--custom-tab-hover-color, #000);
+			border-bottom-color: var(--custom-tab-hover-color, #000);
+			color: var(--custom-tab-hover-text-color, #000);
 			background-color: transparent;
 		}
 		&[aria-selected="true"] {
-			border-top-color: var(--custom-tab-active-color, black);
-			border-left-color: var(--custom-tab-active-color, black);
-			border-right-color: var(--custom-tab-active-color, black);
-			color: var(--custom-tab-active-text-color, black);
+			border-top-color: var(--custom-tab-active-color, #000);
+			border-left-color: var(--custom-tab-active-color, #000);
+			border-right-color: var(--custom-tab-active-color, #000);
+			border-bottom-color: var(--custom-tab-active-color, #000);
+			color: var(--custom-tab-active-text-color, #000);
 			background-color: transparent;
-		}
-	}
-}
-
-// Vertical tweaks to styles.
-.wp-block-tabs.is-vertical {
-	&.is-style-outline .tabs__tab-label {
-		border-bottom: 1px solid var(--custom-tab-background-color);
-		border-right: none;
-		&:hover {
-			border-bottom-color: var(--custom-tab-hover-color);
-		}
-		&[aria-selected="true"] {
-			border-bottom-color: var(--custom-tab-active-color);
 		}
 	}
 }
