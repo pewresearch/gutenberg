@@ -8,19 +8,16 @@ import {
 	withSyncEvent,
 } from '@wordpress/interactivity';
 
-/**
- * Determines whether a value is numeric.
- *
- * @param {*} value A vlue to check.
- * @return {boolean} Whether the value is numeric.
- */
-function isNumeric( value ) {
-	return ! isNaN( parseFloat( value ) );
-}
-
 // Interactivy store for the tabs block.
 const { state, actions } = store( 'core/tabs', {
 	state: {
+		get tabIndex() {
+			const context = getContext();
+			const { tabsList, tab } = context;
+			const tabId = tab?.id;
+			const tabIndex = tabsList.findIndex( ( t ) => t.id === tabId );
+			return tabIndex;
+		},
 		/**
 		 * Whether the tab is the active tab.
 		 *
@@ -28,11 +25,9 @@ const { state, actions } = store( 'core/tabs', {
 		 */
 		get isActiveTab() {
 			const context = getContext();
-			const { attributes } = getElement();
-			const tabIndexValue = attributes?.[ 'data-tab-index' ];
-			const tabIndex = isNumeric( tabIndexValue )
-				? parseInt( tabIndexValue, 10 )
-				: 0;
+			const { tabsList, tab } = context;
+			const tabId = tab?.id;
+			const tabIndex = tabsList.findIndex( ( t ) => t.id === tabId );
 			return context.activeTabIndex === tabIndex;
 		},
 		/**
@@ -107,11 +102,7 @@ const { state, actions } = store( 'core/tabs', {
 		handleTabClick: withSyncEvent( ( event ) => {
 			event.preventDefault();
 
-			const tabIndexValue =
-				event.target?.getAttribute( 'data-tab-index' );
-			const tabIndex = isNumeric( tabIndexValue )
-				? parseInt( tabIndexValue, 10 )
-				: null;
+			const tabIndex = state.tabIndex;
 
 			if ( tabIndex !== null ) {
 				actions.setActiveTab( tabIndex );
@@ -125,23 +116,6 @@ const { state, actions } = store( 'core/tabs', {
 		setActiveTab: ( tabIndex ) => {
 			const context = getContext();
 			context.activeTabIndex = tabIndex;
-		},
-	},
-	callbacks: {
-		/**
-		 * Focuses the tab from ?activeTabIndex query param.
-		 */
-		focusActiveTabIndex: () => {
-			const context = getContext();
-			const { activeTabIndexQueryVar } = context;
-			if ( false !== activeTabIndexQueryVar ) {
-				const tabLabel = document.querySelector(
-					`a.wp-block-tabs__tab-label[data-tab-hash="${ activeTabIndexQueryVar }"]`
-				);
-				if ( tabLabel ) {
-					tabLabel.scrollIntoView( { behavior: 'smooth' } );
-				}
-			}
 		},
 	},
 } );

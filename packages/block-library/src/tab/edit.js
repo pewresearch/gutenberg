@@ -10,12 +10,20 @@ import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
 	useInnerBlocksProps,
+	getTypographyClassesAndStyles as useTypographyProps,
+	__experimentalUseColorProps as useColorProps,
 	store as blockEditorStore,
-	InspectorControls,
+	RichText,
 } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useMemo, useRef } from '@wordpress/element';
-import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
+import { useMemo, useRef, useEffect } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { TabFill, TabsListSlot } from './slotfill';
+import Controls from './controls';
+import slugFromLabel from './slug-from-label';
 
 const TEMPLATE = [
 	[
@@ -32,28 +40,34 @@ export default function Edit( {
 	isSelected,
 	setAttributes,
 } ) {
-	const { anchor, label, slug, isActive } = attributes;
-	const { selectBlock, updateBlockAttributes } =
-		useDispatch( blockEditorStore );
+	const { anchor, label, slug } = attributes;
+	const { selectBlock } = useDispatch( blockEditorStore );
+	const labelRef = useRef();
+
+	// Add useEffect to focus the RichText when no label exists
+	useEffect( () => {
+		if ( ! label && labelRef.current ) {
+			const timeoutId = setTimeout( () => {
+				labelRef.current.focus();
+			}, 100 ); // A really quick millisecond delay to ensure the ref is and block is selected and active.
+			return () => clearTimeout( timeoutId );
+		}
+	}, [ label ] );
 
 	const {
 		blockIndex,
-		hasChildBlocks,
 		hasInnerBlocksSelected,
 		tabsHasSelectedBlock,
 		tabsClientId,
 		tabsAttributes,
 		forceDisplay,
 		isTabsClientSelected,
-		previousTabClientId,
-		nextTabClientId,
 		isDefaultTab,
 	} = useSelect(
 		( select ) => {
 			const {
 				getBlockRootClientId,
 				getBlockIndex,
-				getBlockOrder,
 				getPreviousBlockClientId,
 				getNextBlockClientId,
 				isBlockSelected,
@@ -71,7 +85,6 @@ export default function Edit( {
 			// Get data about this instance of core/tab.
 			const _blockIndex = getBlockIndex( clientId );
 			const _isDefaultTab = activeTabIndex === _blockIndex;
-			const _hasChildBlocks = getBlockOrder( clientId ).length > 0;
 			const _hasInnerBlocksSelected = hasSelectedInnerBlock(
 				clientId,
 				true
@@ -83,7 +96,6 @@ export default function Edit( {
 
 			return {
 				blockIndex: _blockIndex,
-				hasChildBlocks: _hasChildBlocks,
 				hasInnerBlocksSelected: _hasInnerBlocksSelected,
 				tabsClientId: rootClientId,
 				forceDisplay: _isDefaultTab && _isTabsClientSelected,
@@ -102,23 +114,19 @@ export default function Edit( {
 	 * This hook determines if the current tab is selected. This is true if it is the active tab, or if it is selected directly.
 	 */
 	const isSelectedTab = useMemo( () => {
-		if ( isActive ) {
+		if ( isSelected || hasInnerBlocksSelected || forceDisplay ) {
 			return true;
 		}
-		// if ( isSelected || hasInnerBlocksSelected || forceDisplay ) {
-		// 	return true;
-		// }
-		// if (
-		// 	isDefaultTab &&
-		// 	! isTabsClientSelected &&
-		// 	! isSelected &&
-		// 	! tabsHasSelectedBlock
-		// ) {
-		// 	return true;
-		// }
+		if (
+			isDefaultTab &&
+			! isTabsClientSelected &&
+			! isSelected &&
+			! tabsHasSelectedBlock
+		) {
+			return true;
+		}
 		return false;
 	}, [
-		isActive,
 		isSelected,
 		hasInnerBlocksSelected,
 		forceDisplay,
@@ -132,49 +140,99 @@ export default function Edit( {
 	const tabPanelId = useMemo( () => anchor || slug, [ anchor, slug ] );
 	const tabLabelId = useMemo( () => `${ tabPanelId }--tab`, [ tabPanelId ] );
 
+	const tabItemColorProps = useColorProps( tabsAttributes );
+	const tabContentTypographyProps = useTypographyProps( attributes );
+
 	const blockProps = useBlockProps( {
 		hidden: ! isSelectedTab,
-		'aria-labelledby': tabLabelId,
-		id: tabPanelId,
-		role: 'tabpanel',
-		ref: innerBlocksRef,
-		tabIndex: 0,
 	} );
 
-	const innerBlocksProps = useInnerBlocksProps( blockProps, {
-		template: TEMPLATE,
-	} );
+	const innerBlocksProps = useInnerBlocksProps(
+		{
+			'aria-labelledby': tabLabelId,
+			id: tabPanelId,
+			role: 'tabpanel',
+			ref: innerBlocksRef,
+			tabIndex: 0,
+			className: clsx(
+				tabContentTypographyProps.className,
+				'tabs__tab-editor-content'
+			),
+			style: {
+				...tabContentTypographyProps.style,
+			},
+		},
+		{
+			template: TEMPLATE,
+		}
+	);
 
 	return (
 		<>
-			<InspectorControls>
-				<PanelBody title="Tab Settings">
-					<TextControl
-						label="Label"
-						value={ label }
-						onChange={ ( value ) =>
-							setAttributes( { label: value } )
-						}
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-					/>
-					<ToggleControl
-						label="Is Default"
-						checked={ isDefaultTab }
-						onChange={ ( value ) => {
-							updateBlockAttributes( tabsClientId, {
-								activeTabIndex: value ? blockIndex : 0,
-							} );
-						} }
-						help={ __(
-							'If true, this tab will be selected when the page loads.'
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+				tabsClientId={ tabsClientId }
+				blockIndex={ blockIndex }
+				isDefaultTab={ isDefaultTab }
+			/>
+			<div { ...blockProps }>
+				<TabFill tabsClientId={ tabsClientId }>
+					<li
+						role="presentation"
+						className={ clsx(
+							'tabs__list-item',
+							tabItemColorProps.className
 						) }
-						__nextHasNoMarginBottom
-					/>
-				</PanelBody>
-			</InspectorControls>
-
-			<section { ...innerBlocksProps } />
+						style={ {
+							...tabItemColorProps.style,
+						} }
+						// tabIndex={ isSelectedTab ? 0 : -1 }
+					>
+						<a // eslint-disable-line jsx-a11y/anchor-is-valid -- remove href attribute in editor so inner text can be selected for editing
+							aria-controls={ tabPanelId }
+							aria-selected={ isSelectedTab }
+							className="tabs__tab-label"
+							id={ tabLabelId }
+							role="tab"
+							tabIndex="0"
+							onClick={ ( event ) => {
+								// Because this is not a "real link" and rather a "tab" we need to prevent the default action.
+								event.preventDefault();
+								selectBlock( clientId );
+							} }
+							onKeyDown={ ( event ) => {
+								if ( event.key === 'Enter' ) {
+									selectBlock( clientId );
+								}
+							} }
+						>
+							<RichText
+								ref={ labelRef }
+								tagName="span"
+								withoutInteractiveFormatting
+								value={ label }
+								placeholder={ __( 'Add label…' ) }
+								onChange={ ( value ) =>
+									setAttributes( {
+										label: value,
+										anchor: slugFromLabel(
+											value,
+											blockIndex
+										),
+									} )
+								}
+							/>
+						</a>
+					</li>
+				</TabFill>
+				{ isSelectedTab && (
+					<>
+						<TabsListSlot tabsClientId={ tabsClientId } />
+						<section { ...innerBlocksProps } />
+					</>
+				) }
+			</div>
 		</>
 	);
 }

@@ -1,5 +1,4 @@
 .wp-block-tab {
-	padding: 1em 0;
 	max-width: 100%;
 	flex-grow: 1;
 	flex-basis: 100%;
@@ -9,8 +8,13 @@
 	&:empty {
 		display: none !important;
 	}
-
-	& > *:first-child {
-		margin-top: 0;
+	&:not(.wp-block):focus {
+		outline: none;
 	}
+}
+
+.wp-block-tab.wp-block section.has-background,
+.wp-block-tab:not(.wp-block).has-background {
+	padding: var(--wp--preset--spacing--30);
+	// margin-top: calc( 1px + calc( -1 * var(--wp--preset--spacing--30))); // Another css hack to align the tab content with the tabs list border.
 }

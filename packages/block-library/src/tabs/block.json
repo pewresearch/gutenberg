@@ -74,9 +74,9 @@
 		"html": false,
 		"interactivity": true,
 		"spacing": {
-			"blockGap": true,
+			"blockGap": [ "horizontal", "vertical" ],
 			"margin": true,
-			"padding": true
+			"padding": false
 		},
 		"typography": {
 			"fontSize": true,

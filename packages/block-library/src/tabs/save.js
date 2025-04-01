@@ -1,26 +1,11 @@
 /**
- * External dependencies
- *
- */
-/**
- * External dependencies
- */
-import clsx from 'clsx';
-
-/**
  * WordPress dependencies
  */
-import {
-	useBlockProps,
-	useInnerBlocksProps,
-	__experimentalGetElementClassName as getElementClassName,
-} from '@wordpress/block-editor';
+import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
 
 export default function Save( {} ) {
 	// eslint-disable-next-line react-compiler/react-compiler
-	const blockProps = useBlockProps.save( {
-		className: clsx( getElementClassName( 'tabs' ) ),
-	} );
+	const blockProps = useBlockProps.save();
 
 	// eslint-disable-next-line react-compiler/react-compiler
 	const innerBlocksProps = useInnerBlocksProps.save( {} );

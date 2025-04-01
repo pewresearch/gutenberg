@@ -10,10 +10,6 @@
 		"label": {
 			"type": "string",
 			"default": ""
-		},
-		"slug": {
-			"type": "string",
-			"default": ""
 		}
 	},
 	"parent": [ "core/tabs" ],
@@ -21,25 +17,14 @@
 		"anchor": true,
 		"html": false,
 		"reusable": false,
-		"color": {
-			"background": false,
-			"heading": true,
-			"text": true
-		},
-		"spacing": {
-			"padding": true,
-			"blockGap": true,
-			"__experimentalDefaultControls": {
-				"padding": true
-			}
-		},
 		"typography": {
 			"fontSize": true,
 			"__experimentalFontFamily": true,
 			"__experimentalDefaultControls": {
 				"fontSize": true,
 				"__experimentalFontFamily": true
-			}
+			},
+			"__experimentalSkipSerialization": true
 		}
 	},
 	"providesContext": {

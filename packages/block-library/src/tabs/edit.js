@@ -9,20 +9,27 @@ import clsx from 'clsx';
 import {
 	useBlockProps,
 	useInnerBlocksProps,
+	InnerBlocks,
 	withColors,
 } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
-import Controls from './controls';
+import { TabFill } from '../tab/slotfill';
 import useColorSupports from './use-color-supports';
-import TabsList from './tabs-list';
+import Controls from './controls';
+import GapStyles from './gap-styles';
 
 const TABS_TEMPLATE = [
-	[ 'core/tab', { label: 'Tab 1', slug: 'tab-1' } ],
-	[ 'core/tab', { label: 'Tab 2', slug: 'tab-2' } ],
+	[ 'core/tab', { label: 'Tab 1', anchor: 'tab-1' } ],
+	[ 'core/tab', { label: 'Tab 2', anchor: 'tab-2' } ],
 ];
+
+const DEFAULT_BLOCK = {
+	name: 'core/tab',
+	attributesToCopy: [ 'className', 'fontFamily', 'fontSize' ],
+};
 
 function Edit( {
 	clientId,
@@ -42,10 +49,11 @@ function Edit( {
 	setTabHoverTextColor,
 } ) {
 	const { style, orientation } = attributes;
+	const tabsListBlockSpacing = style?.spacing?.blockGap || null;
 
 	/**
 	 * Provide additional non-core color supports for tab background and text colors.
-	 * TODO: Talk to Gutenberg team about how to add these into the style engine proper so that these can be set in the style book??
+	 * TODO: Talk to Gutenberg team about how to add these into the style engine proper, so that defaults can be set in the style book??
 	 */
 	const additionalColorSupportingStyles = useColorSupports( attributes );
 
@@ -65,18 +73,15 @@ function Edit( {
 	/**
 	 * Innerblocks props for the tabs content.
 	 */
-	const innerBlockProps = useInnerBlocksProps(
-		{
-			className: 'tabs__content',
-		},
-		{
-			__experimentalCaptureToolbars: true,
-			clientId,
-			orientation,
-			template: TABS_TEMPLATE,
-			renderAppender: false, // We handle this via a slotfill.
-		}
-	);
+	const innerBlockProps = useInnerBlocksProps( blockProps, {
+		defaultBlock: DEFAULT_BLOCK,
+		directInsert: true,
+		__experimentalCaptureToolbars: true,
+		clientId,
+		orientation,
+		template: TABS_TEMPLATE,
+		renderAppender: false, // We handle this via a slotfill.
+	} );
 
 	return (
 		<>
@@ -99,9 +104,18 @@ function Edit( {
 					setTabHoverTextColor,
 				} }
 			/>
-			<div { ...blockProps }>
-				<TabsList tabsClientId={ clientId } />
+			<div { ...innerBlockProps }>
 				{ innerBlockProps.children }
+				<TabFill tabsClientId={ clientId }>
+					<li className="wp-block-tabs__tab-item__inserter">
+						<InnerBlocks.ButtonBlockAppender />
+					</li>
+				</TabFill>
+				<GapStyles
+					blockGap={ tabsListBlockSpacing }
+					clientId={ clientId }
+					orientation={ orientation }
+				/>
 			</div>
 		</>
 	);

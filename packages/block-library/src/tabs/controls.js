@@ -64,53 +64,7 @@ export default function Controls( {
 				<ColorGradientSettingsDropdown
 					settings={ [
 						{
-							label: __( 'Tab Inactive State' ),
-							colorValue:
-								tabBackgroundColor?.color ??
-								customTabBackgroundColor,
-							onColorChange: ( value ) => {
-								setTabBackgroundColor( value );
-								setAttributes( {
-									customTabBackgroundColor: value,
-								} );
-							},
-						},
-						{
-							label: __( 'Tab Inactive Text' ),
-							colorValue:
-								tabTextColor?.color ?? customTabTextColor,
-							onColorChange: ( value ) => {
-								setTabTextColor( value );
-								setAttributes( {
-									customTabTextColor: value,
-								} );
-							},
-						},
-						{
-							label: __( 'Tab Hover State' ),
-							colorValue:
-								tabHoverColor?.color ?? customTabHoverColor,
-							onColorChange: ( value ) => {
-								setTabHoverColor( value );
-								setAttributes( {
-									customTabHoverColor: value,
-								} );
-							},
-						},
-						{
-							label: __( 'Tab Hover Text' ),
-							colorValue:
-								tabHoverTextColor?.color ??
-								customTabHoverTextColor,
-							onColorChange: ( value ) => {
-								setTabHoverTextColor( value );
-								setAttributes( {
-									customTabHoverTextColor: value,
-								} );
-							},
-						},
-						{
-							label: __( 'Tab Active State' ),
+							label: __( 'Tab Active Background' ),
 							colorValue:
 								tabActiveColor?.color ?? customTabActiveColor,
 							onColorChange: ( value ) => {
@@ -129,6 +83,53 @@ export default function Controls( {
 								setTabActiveTextColor( value );
 								setAttributes( {
 									customTabActiveTextColor: value,
+								} );
+							},
+						},
+						{
+							label: __( 'Tab Inactive Background' ),
+							colorValue:
+								tabBackgroundColor?.color ??
+								customTabBackgroundColor,
+							onColorChange: ( value ) => {
+								console.log( 'Tab Inactive Background', value );
+								setTabBackgroundColor( value );
+								setAttributes( {
+									customTabBackgroundColor: value,
+								} );
+							},
+						},
+						{
+							label: __( 'Tab Inactive Text' ),
+							colorValue:
+								tabTextColor?.color ?? customTabTextColor,
+							onColorChange: ( value ) => {
+								setTabTextColor( value );
+								setAttributes( {
+									customTabTextColor: value,
+								} );
+							},
+						},
+						{
+							label: __( 'Tab Hover Background' ),
+							colorValue:
+								tabHoverColor?.color ?? customTabHoverColor,
+							onColorChange: ( value ) => {
+								setTabHoverColor( value );
+								setAttributes( {
+									customTabHoverColor: value,
+								} );
+							},
+						},
+						{
+							label: __( 'Tab Hover Text' ),
+							colorValue:
+								tabHoverTextColor?.color ??
+								customTabHoverTextColor,
+							onColorChange: ( value ) => {
+								setTabHoverTextColor( value );
+								setAttributes( {
+									customTabHoverTextColor: value,
 								} );
 							},
 						},

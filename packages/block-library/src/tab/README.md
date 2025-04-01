@@ -1,6 +1,6 @@
-# Tabs
+# Tab
 
-Contributors:      Seth Rubenstein,Pew Research Center, creativecoder
+Contributors:      Seth Rubenstein, Pew Research Center, creativecoder
 Tags:              block
 Tested up to:      6.8
 Stable tag:        1.0.0
