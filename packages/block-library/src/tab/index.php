@@ -57,26 +57,6 @@ function block_core_tab_get_typography_styles( $attributes ) {
 		$typography_styles[] = sprintf( 'font-family: %s;', $attributes['style']['typography']['fontFamily'] );
 	}
 
-	if ( ! empty( $attributes['style']['typography']['letterSpacing'] ) ) {
-		$typography_styles[] = sprintf( 'letter-spacing: %s;', $attributes['style']['typography']['letterSpacing'] );
-	}
-
-	if ( ! empty( $attributes['style']['typography']['fontWeight'] ) ) {
-		$typography_styles[] = sprintf( 'font-weight: %s;', $attributes['style']['typography']['fontWeight'] );
-	}
-
-	if ( ! empty( $attributes['style']['typography']['fontStyle'] ) ) {
-		$typography_styles[] = sprintf( 'font-style: %s;', $attributes['style']['typography']['fontStyle'] );
-	}
-
-	if ( ! empty( $attributes['style']['typography']['lineHeight'] ) ) {
-		$typography_styles[] = sprintf( 'line-height: %s;', $attributes['style']['typography']['lineHeight'] );
-	}
-
-	if ( ! empty( $attributes['style']['typography']['textTransform'] ) ) {
-		$typography_styles[] = sprintf( 'text-transform: %s;', $attributes['style']['typography']['textTransform'] );
-	}
-
 	return implode( '', $typography_styles );
 }
 
@@ -96,6 +76,10 @@ function render_block_core_tab( $attributes, $content ) {
 
 	$tab_id = $tag_processor->get_attribute( 'id' );
 
+	$classname = $tag_processor->get_attribute( 'class' );
+	$classname .= ' ' . block_core_tab_get_typography_classes( $attributes );
+	$tag_processor->set_attribute( 'class', $classname );
+
 	$tag_processor->set_attribute( 'role', 'tabpanel' );
 	$tag_processor->set_attribute( 'aria-labelledby', $tab_id );
 	$tag_processor->set_attribute( 'data-wp-tab-id', $tab_id );
@@ -104,7 +88,6 @@ function render_block_core_tab( $attributes, $content ) {
 
 	$style  = $tag_processor->get_attribute( 'style' );
 	$style .= block_core_tab_get_typography_styles( $attributes );
-	$style .= block_core_tab_get_typography_classes( $attributes );
 	$tag_processor->set_attribute( 'style', $style );
 
 	$content = $tag_processor->get_updated_html();
