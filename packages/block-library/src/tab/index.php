@@ -5,10 +5,9 @@
  * @since 6.1.0
  *
  * @param array $attributes The block attributes.
- *
  * @return string The typography color classnames to be applied to the block elements.
  */
-function get_typography_classes_for_block_core_tab( $attributes ) {
+function block_core_tab_get_typography_classes( $attributes ) {
 	$typography_classes    = array();
 	$has_named_font_family = ! empty( $attributes['fontFamily'] );
 	$has_named_font_size   = ! empty( $attributes['fontSize'] );
@@ -31,10 +30,9 @@ function get_typography_classes_for_block_core_tab( $attributes ) {
  * @since 6.1.0
  *
  * @param array $attributes The block attributes.
- *
  * @return string A string of typography CSS declarations.
  */
-function get_typography_styles_for_block_core_tab( $attributes ) {
+function block_core_tab_get_typography_styles( $attributes ) {
 	$typography_styles = array();
 
 	// Add typography styles.
@@ -47,7 +45,6 @@ function get_typography_styles_for_block_core_tab( $attributes ) {
 				)
 			)
 		);
-
 	}
 
 	if ( ! empty( $attributes['style']['typography']['fontFamily'] ) ) {
@@ -81,16 +78,18 @@ function get_typography_styles_for_block_core_tab( $attributes ) {
  * Render the core/tab block.
  * This function adds Interactivity API directives to the tabpanel.
  *
+ * @since 6.1.0
+ *
  * @param array    $attributes Block attributes.
- * @param string   $content Block content.
- * @param WP_Block $block WP_Block object.
+ * @param string   $content    Block content.
+ * @param WP_Block $block      WP_Block object.
  * @return string
  */
 function render_block_core_tab( $attributes, $content, $block ) {
-	$tag_processor = new WP_HTML_Tag_Processor($content);
-	$tag_processor->next_tag( array('class_name' => 'wp-block-tab') );
+	$tag_processor = new WP_HTML_Tag_Processor( $content );
+	$tag_processor->next_tag( array( 'class_name' => 'wp-block-tab' ) );
 
-	$tab_id = $tag_processor->get_attribute('id');
+	$tab_id = $tag_processor->get_attribute( 'id' );
 
 	$tag_processor->set_attribute( 'role', 'tabpanel' );
 	$tag_processor->set_attribute( 'aria-labelledby', $tab_id );
@@ -98,16 +97,20 @@ function render_block_core_tab( $attributes, $content, $block ) {
 	$tag_processor->set_attribute( 'data-wp-bind--hidden', '!state.isActiveTab' );
 	$tag_processor->set_attribute( 'data-wp-bind--tabindex', 'state.tabIndexAttribute' );
 
+	$style = $tag_processor->get_attribute( 'style' );
+	$style .= block_core_tab_get_typography_styles( $attributes );
+	$style .= block_core_tab_get_typography_classes( $attributes );
+	$tag_processor->set_attribute( 'style', $style );
+
 	$content = $tag_processor->get_updated_html();
 
 	return $content;
 }
 
 /**
-}
-
-/**
  * Registers the `core/tab` block on the server.
+ *
+ * @since 6.1.0
  */
 function register_block_core_tab() {
 	register_block_type_from_metadata(
