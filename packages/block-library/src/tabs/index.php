@@ -1,5 +1,11 @@
 <?php
 /**
+ * Server-side rendering of the `core/tabs` block.
+ *
+ * @package WordPress
+ */
+
+/**
  * Constructs a string of CSS color variables for the tabs block.
  * - customTabBackgroundColor - The background color of the tabs.
  * - customTabHoverColor - The hover background color of the tabs.
@@ -31,7 +37,7 @@ function block_core_tabs_generate_color_variables( $attributes ) {
 	);
 
 	$style_string = array_map(
-		function( $key, $value ) {
+		function ( $key, $value ) {
 			return ! empty( $value ) ? $key . ': ' . $value . ';' : '';
 		},
 		array_keys( $styles ),
@@ -82,7 +88,7 @@ function block_core_tabs_generate_gap_styles( $attributes ) {
 	$block_gap_horizontal = preg_match( '/^var:preset\|spacing\|\d+$/', $block_gap_horizontal )
 		? 'var(--wp--preset--spacing--' . substr( $block_gap_horizontal, strrpos( $block_gap_horizontal, '|' ) + 1 ) . ')'
 		: $block_gap_horizontal;
-	$block_gap_vertical = preg_match( '/^var:preset\|spacing\|\d+$/', $block_gap_vertical )
+	$block_gap_vertical   = preg_match( '/^var:preset\|spacing\|\d+$/', $block_gap_vertical )
 		? 'var(--wp--preset--spacing--' . substr( $block_gap_vertical, strrpos( $block_gap_vertical, '|' ) + 1 ) . ')'
 		: $block_gap_vertical;
 
@@ -103,8 +109,8 @@ function block_core_tabs_generate_gap_styles( $attributes ) {
  */
 function block_core_tabs_generate_tabs_list_from_innerblocks( $innerblocks = array() ) {
 	$tab_index = 0;
-	$tabs_list  = array_map(
-		function( $tab ) use ( &$tab_index ) {
+	$tabs_list = array_map(
+		function ( $tab ) use ( &$tab_index ) {
 			$attrs = $tab['attrs'];
 
 			$tag_processor = new WP_HTML_Tag_Processor( $tab['innerHTML'] );
@@ -177,7 +183,7 @@ function render_block_core_tabs( $attributes, $content, $block ) {
 	$content = $tag_processor->get_updated_html();
 
 	$tabs_list = array_map(
-		function( $tab ) {
+		function ( $tab ) {
 			return wp_sprintf(
 				'<li class="tabs__list-item" role="presentation"><a data-wp-tab-id="%s" class="tabs__tab-label" data-wp-bind--href="state.getTabHref" role="tab" data-wp-on--click="actions.handleTabClick" data-wp-on--keydown="actions.handleTabKeyDown" data-wp-bind--aria-selected="state.isActiveTab" data-wp-bind--tabindex="state.tabIndexAttribute">%s</a></li>',
 				$tab['id'],
