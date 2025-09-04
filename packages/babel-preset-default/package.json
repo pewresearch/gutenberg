@@ -37,7 +37,7 @@
 		"@babel/plugin-transform-runtime": "7.25.7",
 		"@babel/preset-env": "7.25.7",
 		"@babel/preset-typescript": "7.25.7",
-		"@babel/runtime": "7.25.7",
+		"@babel/runtime": "7.28.3",
 		"@wordpress/browserslist-config": "file:../browserslist-config",
 		"@wordpress/warning": "file:../warning",
 		"browserslist": "^4.21.10",
