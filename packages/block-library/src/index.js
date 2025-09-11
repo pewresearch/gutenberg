@@ -50,6 +50,9 @@ import * as commentsPaginationNumbers from './comments-pagination-numbers';
 import * as commentsTitle from './comments-title';
 import * as cover from './cover';
 import * as details from './details';
+import * as dialog from './dialog';
+import * as dialogElement from './dialog-element';
+import * as dialogTrigger from './dialog-trigger';
 import * as embed from './embed';
 import * as file from './file';
 import * as form from './form';
@@ -246,6 +249,9 @@ const getAllBlocks = () => {
 		blocks.push( accordionContent );
 		blocks.push( accordionHeader );
 		blocks.push( accordionPanel );
+		blocks.push( dialog );
+		blocks.push( dialogElement );
+		blocks.push( dialogTrigger );
 		blocks.push( termsQuery );
 		blocks.push( termTemplate );
 	}

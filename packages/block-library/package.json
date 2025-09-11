@@ -28,6 +28,7 @@
 	"wpScript": true,
 	"wpScriptModuleExports": {
 		"./accordion/view": "./build-module/accordion/view.js",
+		"./dialog-element/view": "./build-module/dialog-element/view.js",
 		"./file/view": "./build-module/file/view.js",
 		"./form/view": "./build-module/form/view.js",
 		"./image/view": "./build-module/image/view.js",
