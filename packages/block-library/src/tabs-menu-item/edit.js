@@ -11,7 +11,6 @@ import {
 	useBlockProps,
 	withColors,
 	store as blockEditorStore,
-	InspectorControls,
 	__experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
 	__experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 	ContrastChecker,
@@ -25,6 +24,7 @@ import { RawHTML, useRef, useCallback, useState, useEffect, useMemo } from '@wor
  * Internal dependencies
  */
 import slugFromLabel from '../tab/slug-from-label';
+import Controls from './controls';
 
 const { requestAnimationFrame, cancelAnimationFrame } = window;
 
@@ -44,131 +44,6 @@ function StaticLabel( { label, index } ) {
 				index + 1
 			) }
 		</span>
-	);
-}
-
-function ContrastCheckerMatrix( { attributes, activeBackgroundColor, activeTextColor, hoverBackgroundColor, hoverTextColor } ) {
-	const {
-		customActiveBackgroundColor,
-		customActiveTextColor,
-		customHoverBackgroundColor,
-		customHoverTextColor,
-		backgroundColor,
-		textColor,
-		fontSize,
-	} = attributes;
-
-	const activeBackground = activeBackgroundColor?.color ?? customActiveBackgroundColor;
-	const activeText = activeTextColor?.color ?? customActiveTextColor;
-	const hoverBackground = hoverBackgroundColor?.color ?? customHoverBackgroundColor;
-	const hoverText = hoverTextColor?.color ?? customHoverTextColor;
-
-	return (
-		<>
-			<ContrastChecker
-				backgroundColor={ backgroundColor }
-				fontSize={ fontSize }
-				textColor={ textColor }
-			/>
-			<ContrastChecker
-				backgroundColor={ activeBackground }
-				fontSize={ fontSize }
-				textColor={ activeText }
-			/>
-			<ContrastChecker
-				backgroundColor={ hoverBackground }
-				fontSize={ fontSize }
-				textColor={ hoverText }
-			/>
-		</>
-	);
-}
-
-function Controls( {
-	attributes,
-	setAttributes,
-	clientId,
-	activeBackgroundColor,
-	setActiveBackgroundColor,
-	activeTextColor,
-	setActiveTextColor,
-	hoverBackgroundColor,
-	setHoverBackgroundColor,
-	hoverTextColor,
-	setHoverTextColor,
-} ) {
-	const {
-		customActiveBackgroundColor,
-		customActiveTextColor,
-		customHoverBackgroundColor,
-		customHoverTextColor,
-	} = attributes;
-
-	const colorSettings = useMultipleOriginColorsAndGradients();
-
-	return (
-		<InspectorControls group="color">
-			<ColorGradientSettingsDropdown
-				settings={ [
-					{
-						label: __( 'Active Background' ),
-						colorValue:
-							activeBackgroundColor?.color ?? customActiveBackgroundColor,
-						onColorChange: ( value ) => {
-							setActiveBackgroundColor( value );
-							setAttributes( {
-								customActiveBackgroundColor: value,
-							} );
-						},
-					},
-					{
-						label: __( 'Active Text' ),
-						colorValue:
-							activeTextColor?.color ?? customActiveTextColor,
-						onColorChange: ( value ) => {
-							setActiveTextColor( value );
-							setAttributes( {
-								customActiveTextColor: value,
-							} );
-						},
-					},
-					{
-						label: __( 'Hover Background' ),
-						colorValue:
-							hoverBackgroundColor?.color ?? customHoverBackgroundColor,
-						onColorChange: ( value ) => {
-							setHoverBackgroundColor( value );
-							setAttributes( {
-								customHoverBackgroundColor: value,
-							} );
-						},
-					},
-					{
-						label: __( 'Hover Text' ),
-						colorValue:
-							hoverTextColor?.color ?? customHoverTextColor,
-						onColorChange: ( value ) => {
-							setHoverTextColor( value );
-							setAttributes( {
-								customHoverTextColor: value,
-							} );
-						},
-					},
-				] }
-				panelId={ clientId }
-				disableCustomColors={ false }
-				__experimentalIsRenderedInSidebar
-				__next40pxDefaultSize
-				{ ...colorSettings }
-			/>
-			<ContrastCheckerMatrix
-				attributes={ attributes }
-				activeBackgroundColor={ activeBackgroundColor }
-				activeTextColor={ activeTextColor }
-				hoverBackgroundColor={ hoverBackgroundColor }
-				hoverTextColor={ hoverTextColor }
-			/>
-		</InspectorControls>
 	);
 }
 
@@ -201,6 +76,15 @@ function Edit( {
 	const effectiveActiveIndex = useMemo( () => {
 		return editorActiveTabIndex ?? activeTabIndex;
 	}, [ editorActiveTabIndex, activeTabIndex ] );
+
+	console.log( "TAB?", {
+		tabLabel,
+		tabClientId,
+		tabIndex,
+		editorActiveTabIndex,
+		activeTabIndex,
+		effectiveActiveIndex,
+	})
 
 	const isActiveTab = tabIndex === effectiveActiveIndex;
 

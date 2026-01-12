@@ -67,7 +67,7 @@ function TabsMenuItemTemplateBlocks( { wrapperProps = {} } ) {
 		templateLock: 'all',
 		renderAppender: false,
 	} );
-	return <div { ...innerBlocksProps } />;
+	return innerBlocksProps.children;
 }
 
 function Edit( {

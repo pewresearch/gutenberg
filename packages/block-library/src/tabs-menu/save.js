@@ -6,7 +6,7 @@ import clsx from 'clsx';
 /**
  * WordPress dependencies
  */
-import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
+import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
 
 export default function Save() {
 	// Container props for the tablist
@@ -15,9 +15,9 @@ export default function Save() {
 		role: 'tablist',
 	} );
 
+	const innerBlocksProps = useInnerBlocksProps.save( blockProps );
+
 	return (
-		<div { ...blockProps }>
-			<InnerBlocks.Content />
-		</div>
+		<div { ...innerBlocksProps } />
 	);
 }

@@ -31,6 +31,27 @@
 			"minHeight": false,
 			"width": false
 		},
+		"color": {
+			"background": true,
+			"text": true,
+			"button": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		},
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true,
+			"__experimentalDefaultControls": {
+				"color": true,
+				"radius": true,
+				"style": true,
+				"width": true
+			}
+		},
 		"layout": {
 			"default": {
 				"type": "flex",
@@ -43,7 +64,14 @@
 			"allowOrientation": true
 		},
 		"spacing": {
-			"blockGap": true
+			"padding": true,
+			"margin": true,
+			"blockGap": true,
+			"__experimentalDefaultControls": {
+				"padding": true,
+				"margin": true,
+				"blockGap": true
+			}
 		}
 	},
 	"editorScript": "file:./index.js",

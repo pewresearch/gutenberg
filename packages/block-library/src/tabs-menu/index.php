@@ -21,61 +21,42 @@ function block_core_tabs_menu_render_callback( array $attributes, string $conten
 		return '';
 	}
 
-	// Extract the tabs-menu-item template element from inner blocks content.
-	// The tabs-menu-item saves as an <a> element with wp-block-tabs-menu-item class.
-	preg_match(
-		'/<a[^>]*class="[^"]*wp-block-tabs-menu-item[^"]*"[^>]*>/i',
-		$content,
-		$template_matches
-	);
-	$template = $template_matches[0] ?? '<a class="wp-block-tabs-menu-item tabs__tab-label">';
+	// Get the first inner block as template (tabs-menu-item)
+	$inner_blocks = $block->parsed_block['innerBlocks'] ?? array();
+	if ( empty( $inner_blocks ) ) {
+		return '';
+	}
+	$template_block = $inner_blocks[0];
 
-	// Remove the template marker class and hidden attribute from the extracted template
-	$template = preg_replace( '/\s*tabs__tab-template/', '', $template );
-	$template = preg_replace( '/\s*hidden(?:="[^"]*")?/', '', $template );
-
-	// Build tabs from template
+	// Build rendered tab items
 	$tabs_markup = '';
-	foreach ( $tabs_list as $tab ) {
-		$tab_id    = esc_attr( $tab['id'] ?? '' );
-		$tab_label = esc_html( $tab['label'] ?? '' );
-
-		if ( empty( $tab_id ) ) {
-			continue;
-		}
-
-		// Clone template and inject tab-specific attributes
-		$tab_element = $template;
-
-		// Remove closing > to append more attributes
-		$tab_element  = preg_replace( '/>$/', '', $tab_element );
-		$tab_element .= sprintf(
-			' id="tab__%1$s" href="#%1$s" role="tab" aria-controls="%1$s" ' .
-			'data-wp-on--click="actions.handleTabClick" ' .
-			'data-wp-on--keydown="actions.handleTabKeyDown" ' .
-			'data-wp-bind--aria-selected="state.isActiveTab" ' .
-			'data-wp-bind--tabindex="state.tabIndexAttribute">%2$s</a>',
-			$tab_id,
-			html_entity_decode( $tab_label )
+	foreach ( $tabs_list as $index => $tab ) {
+		// Create context for this specific tab
+		$tab_context = array_merge(
+			$block->context,
+			array(
+				'core/tabs-menu-item-index' => $index,
+				'core/tabs-menu-item-id'    => $tab['id'] ?? '',
+				'core/tabs-menu-item-label' => $tab['label'] ?? '',
+			)
 		);
-		$tabs_markup .= $tab_element;
+
+		// Create new WP_Block instance with template and context
+		$tab_block = new WP_Block( $template_block, $tab_context );
+
+		// Render the block
+		$tabs_markup .= $tab_block->render();
 	}
 
-	// Process container and replace inner content with actual tabs
-	$tag_processor = new WP_HTML_Tag_Processor( $content );
-	$tag_processor->next_tag( array( 'class_name' => 'wp-block-tabs-menu' ) );
-
-	$updated_content = $tag_processor->get_updated_html();
-
-	// Replace the inner tabs-menu-item template with actual tabs
-	// The template is the <a> element that was saved as inner block content
-	$final_content = preg_replace(
-		'/<a[^>]*class="[^"]*wp-block-tabs-menu-item[^"]*"[^>]*>(?:<\/a>)?/i',
+	// Find the template block and replace it in $content with $tabs_markup
+	// Key off the tabs__tab-label class to allow 3rd party blocks to override the template with additional blocks.
+	$content = preg_replace(
+		'/<a\b[^>]*\btabs__tab-label\b[^>]*>.*?<\/a>/si',
 		$tabs_markup,
-		$updated_content
+		$content
 	);
 
-	return is_string( $final_content ) ? $final_content : $updated_content;
+	return $content;
 }
 
 /**
