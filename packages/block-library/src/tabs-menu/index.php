@@ -6,98 +6,10 @@
  */
 
 /**
- * Build inline CSS custom properties for active/hover color settings.
- *
- * @param array $attributes Block attributes.
- *
- * @return string Inline CSS string.
- */
-function block_core_tabs_menu_generate_color_styles( array $attributes ): string {
-	$active_bg   = $attributes['customActiveBackgroundColor'] ?? '';
-	$active_text = $attributes['customActiveTextColor'] ?? '';
-	$hover_bg    = $attributes['customHoverBackgroundColor'] ?? '';
-	$hover_text  = $attributes['customHoverTextColor'] ?? '';
-
-	// Extract base colors from core color supports (background/text)
-	// Check custom colors first (style.color.background/text), then preset colors (backgroundColor/textColor)
-	$base_bg   = $attributes['style']['color']['background'] ?? '';
-	$base_text = $attributes['style']['color']['text'] ?? '';
-
-	// Handle preset colors (these are slugs that need to be converted to CSS custom properties)
-	if ( empty( $base_bg ) && ! empty( $attributes['backgroundColor'] ) ) {
-		$base_bg = "var(--wp--preset--color--{$attributes['backgroundColor']})";
-	}
-	if ( empty( $base_text ) && ! empty( $attributes['textColor'] ) ) {
-		$base_text = "var(--wp--preset--color--{$attributes['textColor']})";
-	}
-
-	$styles = array();
-
-	// Only include non-empty values to preserve CSS fallback defaults
-	if ( ! empty( $base_bg ) ) {
-		$styles['--tab-bg'] = $base_bg;
-	}
-	if ( ! empty( $base_text ) ) {
-		$styles['--tab-text'] = $base_text;
-	}
-	if ( ! empty( $active_bg ) ) {
-		$styles['--custom-tab-active-color'] = $active_bg;
-	}
-	if ( ! empty( $active_text ) ) {
-		$styles['--custom-tab-active-text-color'] = $active_text;
-	}
-	if ( ! empty( $hover_bg ) ) {
-		$styles['--custom-tab-hover-color'] = $hover_bg;
-	}
-	if ( ! empty( $hover_text ) ) {
-		$styles['--custom-tab-hover-text-color'] = $hover_text;
-	}
-
-	$style_string = array_map(
-		static function ( string $key, string $value ): string {
-			return $key . ': ' . $value . ';';
-		},
-		array_keys( $styles ),
-		$styles
-	);
-
-	return implode( ' ', array_filter( $style_string ) );
-}
-
-/**
- * Build inline CSS custom properties for border settings.
- *
- * @param array $attributes Block attributes.
- *
- * @return string Inline CSS string.
- */
-function block_core_tabs_menu_generate_border_styles( array $attributes ): string {
-	$radius = $attributes['style']['border']['radius'] ?? null;
-
-	if ( empty( $radius ) ) {
-		return '';
-	}
-
-	if ( is_array( $radius ) ) {
-		$radius_value = wp_sprintf(
-			'%s %s %s %s',
-			$radius['topLeft'] ?? '0',
-			$radius['topRight'] ?? '0',
-			$radius['bottomRight'] ?? '0',
-			$radius['bottomLeft'] ?? '0'
-		);
-	} else {
-		$radius_value = $radius;
-	}
-
-	return wp_sprintf( '--tab-border-radius: %s;', (string) $radius_value );
-}
-
-/**
  * Render callback for core/tabs-menu.
  *
  * @param array     $attributes Block attributes.
- * @param string    $content    Block content.
+ * @param string    $content    Block content (contains the tabs-menu-item template).
  * @param \WP_Block $block      WP_Block instance.
  *
  * @return string Updated HTML.
@@ -109,13 +21,14 @@ function block_core_tabs_menu_render_callback( array $attributes, string $conten
 		return '';
 	}
 
-	// Extract template element from saved content (the hidden <a> with tabs__tab-template class)
+	// Extract the tabs-menu-item template element from inner blocks content.
+	// The tabs-menu-item saves as an <a> element with wp-block-tabs-menu-item class.
 	preg_match(
-		'/<a[^>]*class="[^"]*tabs__tab-template[^"]*"[^>]*>/i',
+		'/<a[^>]*class="[^"]*wp-block-tabs-menu-item[^"]*"[^>]*>/i',
 		$content,
 		$template_matches
 	);
-	$template = $template_matches[0] ?? '<a class="tabs__tab-label">';
+	$template = $template_matches[0] ?? '<a class="wp-block-tabs-menu-item tabs__tab-label">';
 
 	// Remove the template marker class and hidden attribute from the extracted template
 	$template = preg_replace( '/\s*tabs__tab-template/', '', $template );
@@ -148,25 +61,16 @@ function block_core_tabs_menu_render_callback( array $attributes, string $conten
 		$tabs_markup .= $tab_element;
 	}
 
-	// Process container and inject color custom properties
+	// Process container and replace inner content with actual tabs
 	$tag_processor = new WP_HTML_Tag_Processor( $content );
 	$tag_processor->next_tag( array( 'class_name' => 'wp-block-tabs-menu' ) );
 
-	// Add color custom properties to container style
-	$existing_style = (string) $tag_processor->get_attribute( 'style' );
-	$color_styles   = block_core_tabs_menu_generate_color_styles( $attributes );
-	$border_styles  = block_core_tabs_menu_generate_border_styles( $attributes );
-	$combined_style = trim( $existing_style . ' ' . $color_styles . ' ' . $border_styles );
-
-	if ( ! empty( $combined_style ) ) {
-		$tag_processor->set_attribute( 'style', $combined_style );
-	}
-
 	$updated_content = $tag_processor->get_updated_html();
 
-	// Replace template element with actual tabs
+	// Replace the inner tabs-menu-item template with actual tabs
+	// The template is the <a> element that was saved as inner block content
 	$final_content = preg_replace(
-		'/<a[^>]*class="[^"]*tabs__tab-template[^"]*"[^>]*>(?:<\/a>)?/i',
+		'/<a[^>]*class="[^"]*wp-block-tabs-menu-item[^"]*"[^>]*>(?:<\/a>)?/i',
 		$tabs_markup,
 		$updated_content
 	);

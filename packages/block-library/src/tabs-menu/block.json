@@ -11,50 +11,20 @@
 	"parent": [
 		"core/tabs"
 	],
+	"allowedBlocks": [
+		"core/tabs-menu-item"
+	],
 	"usesContext": [
 		"core/tabs-list",
 		"core/tabs-id",
 		"core/tabs-activeTabIndex",
 		"core/tabs-editorActiveTabIndex"
 	],
-	"attributes": {
-		"activeBackgroundColor": {
-			"type": "string"
-		},
-		"customActiveBackgroundColor": {
-			"type": "string"
-		},
-		"activeTextColor": {
-			"type": "string"
-		},
-		"customActiveTextColor": {
-			"type": "string"
-		},
-		"hoverBackgroundColor": {
-			"type": "string"
-		},
-		"customHoverBackgroundColor": {
-			"type": "string"
-		},
-		"hoverTextColor": {
-			"type": "string"
-		},
-		"customHoverTextColor": {
-			"type": "string"
-		}
-	},
+	"attributes": {},
 	"supports": {
 		"html": false,
 		"reusable": false,
-		"color": {
-			"__experimentalSkipSerialization": true,
-			"background": true,
-			"text": true,
-			"__experimentalDefaultControls": {
-				"background": true,
-				"text": true
-			}
-		},
+		"lock": false,
 		"dimensions": {
 			"aspectRatio": false,
 			"height": false,
@@ -72,44 +42,9 @@
 			"allowJustification": true,
 			"allowOrientation": true
 		},
-		"lock": false,
-		"shadow": {
-			"__experimentalSkipSerialization": true
-		},
-		"typography": {
-			"fontSize": true,
-			"__experimentalFontFamily": true,
-			"__experimentalSkipSerialization": [
-				"fontSize",
-				"fontFamily"
-			],
-			"__experimentalDefaultControls": {
-				"fontSize": true
-			}
-		},
 		"spacing": {
-			"padding": true,
-			"__experimentalSkipSerialization": true,
-			"__experimentalDefaultControls": {
-				"padding": true
-			}
-		},
-		"__experimentalBorder": {
-			"radius": true,
-			"color": true,
-			"width": true,
-			"style": true,
-			"__experimentalSkipSerialization": true,
-			"__experimentalDefaultControls": {
-				"radius": true
-			}
+			"blockGap": true
 		}
-	},
-	"selectors": {
-		"root": ".wp-block-tabs-menu",
-		"color": ".wp-block-tabs-menu .tabs__tab-label",
-		"typography": ".wp-block-tabs-menu .tabs__tab-label",
-		"spacing": ".wp-block-tabs-menu .tabs__tab-label"
 	},
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./editor.css",
