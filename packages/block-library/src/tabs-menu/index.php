@@ -49,9 +49,8 @@ function block_core_tabs_menu_render_callback( array $attributes, string $conten
 	}
 
 	// Find the template block and replace it in $content with $tabs_markup
-	// Key off the tabs__tab-label class to allow 3rd party blocks to override the template with additional blocks.
 	$content = preg_replace(
-		'/<a\b[^>]*\btabs__tab-label\b[^>]*>.*?<\/a>/si',
+		'/<a\b[^>]*\bwp-block-tabs-menu-item__template\b[^>]*>.*?<\/a>/si',
 		$tabs_markup,
 		$content
 	);

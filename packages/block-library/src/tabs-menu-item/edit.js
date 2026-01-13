@@ -11,9 +11,6 @@ import {
 	useBlockProps,
 	withColors,
 	store as blockEditorStore,
-	__experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-	__experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
-	ContrastChecker,
 	RichText,
 } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -60,6 +57,7 @@ function Edit( {
 	setHoverBackgroundColor,
 	hoverTextColor,
 	setHoverTextColor,
+	__unstableLayoutClassNames: layoutClassNames,
 } ) {
 	// Context from tabs-menu (per-item context via BlockContextProvider)
 	const tabIndex = context[ 'core/tabs-menu-item-index' ] ?? 0;
@@ -76,15 +74,6 @@ function Edit( {
 	const effectiveActiveIndex = useMemo( () => {
 		return editorActiveTabIndex ?? activeTabIndex;
 	}, [ editorActiveTabIndex, activeTabIndex ] );
-
-	console.log( "TAB?", {
-		tabLabel,
-		tabClientId,
-		tabIndex,
-		editorActiveTabIndex,
-		activeTabIndex,
-		effectiveActiveIndex,
-	})
 
 	const isActiveTab = tabIndex === effectiveActiveIndex;
 
@@ -219,7 +208,7 @@ function Edit( {
 
 	// Use blockProps for core style engine support
 	const blockProps = useBlockProps( {
-		className: clsx( 'tabs__tab-label', {
+		className: clsx( layoutClassNames, {
 			'is-active': isActiveTab,
 			'is-selected': isSelectedTab,
 		} ),
@@ -253,7 +242,7 @@ function Edit( {
 					setHoverTextColor,
 				} }
 			/>
-			<button { ...blockProps }>
+			<div { ...blockProps }>
 				{ isEditing ? (
 					<RichText
 						ref={ labelRef }
@@ -279,7 +268,7 @@ function Edit( {
 						index={ tabIndex }
 					/>
 				) }
-			</button>
+			</div>
 		</>
 	);
 }

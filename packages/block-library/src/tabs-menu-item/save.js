@@ -29,7 +29,7 @@ export default function Save( { attributes } ) {
 	// useBlockProps.save includes all core style engine classes and styles
 	// We add our custom classes and the hidden attribute for PHP template extraction
 	const blockProps = useBlockProps.save( {
-		className: clsx( 'tabs__tab-label', 'tabs__tab-template' ),
+		className: clsx( 'wp-block-tabs-menu-item__template' ),
 		style: customColorStyles,
 		hidden: true,
 	} );

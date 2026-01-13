@@ -2,19 +2,21 @@ button.wp-block-tabs-menu-item {
 	appearance: none;
 }
 
-.wp-block-tabs-menu-item,
-.tabs__tab-label {
+.wp-block-tabs-menu-item {
 	box-sizing: border-box;
 	display: block;
 	width: max-content;
 	margin: 0;
 	opacity: var(--tab-opacity, 0.5);
-	padding-block: var(--tab-padding-block, var(--wp--preset--spacing--20, 0.5em));
-	padding-inline: var(--tab-padding-inline, var(--wp--preset--spacing--30, 1em));
 	text-decoration: none;
 	cursor: pointer;
+
+	padding-block: var(--tab-padding-block, var(--wp--preset--spacing--20, 0.5em));
+	padding-inline: var(--tab-padding-inline, var(--wp--preset--spacing--30, 1em));
+
 	background-color: var(--tab-bg, transparent);
 	color: var(--tab-text, #000);
+
 	border: var(--tab-outline-width, 0) solid var(--tab-border-color, transparent);
 	border-block-end: var(--tab-underline-width, 0) solid var(--tab-border-color, transparent);
 	border-inline-end: var(--tab-side-border-width, 0) solid var(--tab-border-color, transparent);
@@ -40,16 +42,14 @@ button.wp-block-tabs-menu-item {
 
 	&:hover {
 		opacity: var(--tab-opacity-hover, 1);
-		background-color: var(--tab-bg-hover, var(--custom-tab-hover-color, #eaeaea));
-		color: var(--tab-text-hover, var(--custom-tab-hover-text-color, #000));
-		border-color: var(--tab-border-color-hover, var(--custom-tab-hover-color, #000));
+		background-color: var(--custom-tab-hover-color, #eaeaea) !important;
+		color: var(--custom-tab-hover-text-color, #000) !important;
 	}
 
 	&[aria-selected="true"],
 	&.is-active {
 		opacity: var(--tab-opacity-active, 1);
-		background-color: var(--tab-bg-active, var(--custom-tab-active-color, #000));
-		color: var(--tab-text-active, var(--custom-tab-active-text-color, #fff));
-		border-color: var(--tab-border-color-active, var(--custom-tab-active-color, #000));
+		background-color: var(--custom-tab-active-color, #000) !important;
+		color: var(--custom-tab-active-text-color, #fff)  !important;
 	}
 }

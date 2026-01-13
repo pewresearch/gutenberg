@@ -67,6 +67,16 @@
 				"fontSize": true
 			}
 		},
+		"layout": {
+			"default": {
+				"type": "flex",
+				"orientation": "vertical"
+			},
+			"allowVerticalAlignment": true,
+			"allowSwitching": false,
+			"allowJustification": false,
+			"allowOrientation": false
+		},
 		"spacing": {
 			"padding": true,
 			"__experimentalDefaultControls": {
@@ -77,10 +87,7 @@
 			"radius": true,
 			"color": true,
 			"width": true,
-			"style": true,
-			"__experimentalDefaultControls": {
-				"radius": true
-			}
+			"style": true
 		}
 	},
 	"editorScript": "file:./index.js",

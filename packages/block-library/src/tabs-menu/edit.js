@@ -41,7 +41,7 @@ function TabsMenuItemPreview( {
 	};
 
 	const style = {
-		display: isHidden ? 'none' : undefined,
+		display: isHidden ? 'none' : 'flex',
 	};
 
 	return (
@@ -86,12 +86,7 @@ function Edit( {
 		return editorActiveTabIndex ?? activeTabIndex;
 	}, [ editorActiveTabIndex, activeTabIndex ] );
 
-	// Read orientation from tabs-menu's own layout
-	const layout = attributes.layout || {};
-	const orientation = layout.orientation || 'horizontal';
-	const isVertical = orientation === 'vertical';
-
-	const { selectBlock, __unstableMarkNextChangeAsNotPersistent } =
+	const { __unstableMarkNextChangeAsNotPersistent } =
 		useDispatch( blockEditorStore );
 	const { updateBlockAttributes } = useDispatch( blockEditorStore );
 
@@ -140,7 +135,10 @@ function Edit( {
 	// Update active context when editorActiveTabIndex changes
 	useEffect( () => {
 		if ( blockContexts.length > 0 && effectiveActiveIndex < blockContexts.length ) {
-			setActiveBlockContextId( getContextId( blockContexts[ effectiveActiveIndex ] ) );
+			const newContextId = getContextId( blockContexts[ effectiveActiveIndex ] );
+			setActiveBlockContextId( ( prevId ) =>
+				prevId !== newContextId ? newContextId : prevId
+			);
 		}
 	}, [ effectiveActiveIndex, blockContexts, getContextId ] );
 
@@ -156,7 +154,7 @@ function Edit( {
 	);
 
 	const blockProps = useBlockProps( {
-		className: clsx( 'wp-block-tabs-menu', 'tabs__list', layoutClassNames ),
+		className: clsx( layoutClassNames ),
 		role: 'tablist',
 	} );
 

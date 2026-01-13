@@ -33,10 +33,6 @@ function block_core_tabs_menu_item_render_callback( array $attributes, string $c
 		// Remove hidden attribute and template class (from save.js)
 		$tag_processor->remove_attribute( 'hidden' );
 
-		$existing_class = $tag_processor->get_attribute( 'class' ) ?? '';
-		$new_class      = preg_replace( '/\s*tabs__tab-template/', '', $existing_class );
-		$tag_processor->set_attribute( 'class', $new_class );
-
 		// Set tab-specific attributes
 		$tag_processor->set_attribute( 'id', 'tab__' . $tab_id );
 		$tag_processor->set_attribute( 'href', '#' . $tab_id );
@@ -63,7 +59,7 @@ function block_core_tabs_menu_item_render_callback( array $attributes, string $c
 	// Replace the empty anchor content with the label
 	$output = preg_replace(
 		'/(<a[^>]*>)(<\/a>)/',
-		'$1' . esc_html( html_entity_decode( $tab_label ) ) . '$2',
+		'$1' . html_entity_decode( $tab_label ) . '$2',
 		$output
 	);
 
