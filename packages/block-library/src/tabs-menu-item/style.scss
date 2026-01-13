@@ -6,21 +6,13 @@ button.wp-block-tabs-menu-item {
 	box-sizing: border-box;
 	display: block;
 	width: max-content;
-	margin: 0;
-	opacity: var(--tab-opacity, 0.5);
 	text-decoration: none;
 	cursor: pointer;
+	opacity: var(--tab-opacity, 0.5);
 
+	margin: 0;
 	padding-block: var(--tab-padding-block, var(--wp--preset--spacing--20, 0.5em));
 	padding-inline: var(--tab-padding-inline, var(--wp--preset--spacing--30, 1em));
-
-	background-color: var(--tab-bg, transparent);
-	color: var(--tab-text, #000);
-
-	border: var(--tab-outline-width, 0) solid var(--tab-border-color, transparent);
-	border-block-end: var(--tab-underline-width, 0) solid var(--tab-border-color, transparent);
-	border-inline-end: var(--tab-side-border-width, 0) solid var(--tab-border-color, transparent);
-	border-radius: var(--tab-border-radius, 0);
 
 	// Inherit typography from parent
 	font-size: inherit;

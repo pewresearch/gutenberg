@@ -1,31 +1,5 @@
 .wp-block-tabs-menu {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-
 	display: flex;
 	align-items: flex-end;
-
 	min-width: fit-content;
-
-	// CSS custom property defaults for tab items
-	// These can be overridden by tabs-menu-item styles or theme
-	--tab-bg: var(--wp--custom--tabs-menu--background-color, transparent);
-	--tab-bg-hover: var(--custom-tab-hover-color, #eaeaea);
-	--tab-bg-active: var(--custom-tab-active-color, #000);
-	--tab-text: var(--wp--custom--tabs-menu--text-color, #000);
-	--tab-text-hover: var(--custom-tab-hover-text-color, #000);
-	--tab-text-active: var(--custom-tab-active-text-color, #fff);
-	--tab-opacity: 0.5;
-	--tab-opacity-hover: 1;
-	--tab-opacity-active: 1;
-	--tab-outline-width: 0;
-	--tab-underline-width: 0;
-	--tab-side-border-width: 0;
-	--tab-border-color: transparent;
-	--tab-border-color-hover: var(--custom-tab-hover-color, #000);
-	--tab-border-color-active: var(--custom-tab-active-color, #000);
-	--tab-padding-block: var(--wp--preset--spacing--20, 0.5em);
-	--tab-padding-inline: var(--wp--preset--spacing--30, 1em);
-	--tab-border-radius: 0;
 }
