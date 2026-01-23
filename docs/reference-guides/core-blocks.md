@@ -309,9 +309,19 @@ Render content in a <dialog/> element modal. Includes a trigger to open the dial
 -	**Name:** core/dialog
 -	**Experimental:** true
 -	**Category:** media
--	**Allowed Blocks:** core/dialog-trigger, core/dialog-element
--	**Supports:** align (center, full, left, right, wide), interactivity, ~~anchor~~, ~~html~~
--	**Attributes:** dialogId
+-	**Allowed Blocks:** core/dialog-trigger, core/dialog-backdrop
+-	**Supports:** align (center, full, left, right, wide), anchor, interactivity, ~~html~~
+
+## Dialog Backdrop
+
+A backdrop container for the dialog element that supports background styling. ([Source](https://github.com/WordPress/gutenberg/tree/trunk/packages/block-library/src/dialog-backdrop))
+
+-	**Name:** core/dialog-backdrop
+-	**Experimental:** true
+-	**Category:** media
+-	**Parent:** core/dialog
+-	**Allowed Blocks:** core/dialog-element
+-	**Supports:** color (background, gradients, ~~enableContrastChecker~~, ~~text~~), interactivity, ~~align~~, ~~html~~, ~~inserter~~
 
 ## Dialog Element
 
@@ -320,9 +330,9 @@ undefined ([Source](https://github.com/WordPress/gutenberg/tree/trunk/packages/b
 -	**Name:** core/dialog-element
 -	**Experimental:** true
 -	**Category:** media
--	**Parent:** core/dialog
+-	**Parent:** core/dialog-backdrop
 -	**Supports:** animations, color (background, enableContrastChecker, link, text), interactivity, layout (allowEditing), shadow, spacing (blockGap, padding), typography (fontSize), ~~align~~, ~~html~~, ~~inserter~~
--	**Attributes:** animation, animationDuration, autoActivateOnRender, autoActivationTimer, backdropColor, customBackdropColor, dialogLabel, dialogPosition, dialogSize, enableDeepLink
+-	**Attributes:** animation, animationDuration, autoActivateOnRender, autoActivationTimer, dialogLabel, dialogPosition, dialogSize, enableDeepLink
 
 ## Dialog Trigger
 

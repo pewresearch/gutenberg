@@ -23,7 +23,7 @@ import { Toolbar, InspectorPanel } from './controls';
 import StyleEngine from './style-engine';
 import { STORE_NAME } from '../dialog/store';
 
-function Edit( { attributes, setAttributes, context, clientId, className } ) {
+function Edit( { attributes, setAttributes, clientId, className } ) {
 	const { dialogSize = 'medium', animation = 'fade' } = attributes;
 	const { selectBlock } = useDispatch( blockEditorStore );
 	const { init, destroy, open, close } = useDispatch( STORE_NAME );

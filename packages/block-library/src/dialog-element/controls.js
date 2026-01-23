@@ -77,7 +77,7 @@ export function Toolbar( {
 	);
 }
 
-export function InspectorPanel( { clientId, attributes, setAttributes } ) {
+export function InspectorPanel( { attributes, setAttributes } ) {
 	const {
 		autoActivationTimer = -1,
 		animationDuration = 500,

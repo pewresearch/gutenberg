@@ -30,7 +30,7 @@ const TEMPLATE = [
 	],
 ];
 
-export default function Edit( { clientId, context } ) {
+export default function Edit( { clientId } ) {
 	const { selectBlock } = useDispatch( blockEditorStore );
 	const { close } = useDispatch( STORE_NAME );
 

@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useRef, useMemo, useEffect } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import {
 	BlockControls,
 	useBlockProps,
@@ -81,7 +81,7 @@ const TEMPLATE = [
 	],
 ];
 
-export default function Edit( { attributes, setAttributes, clientId } ) {
+export default function Edit( { clientId } ) {
 	// Get the dialog-element block from inner blocks (nested inside dialog-backdrop).
 	const { dialogElementClientId, isDialogOpen } = useSelect(
 		( select ) => {
@@ -92,10 +92,9 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 			const dialogBackdropBlock = block?.innerBlocks?.find(
 				( innerBlock ) => innerBlock.name === 'core/dialog-backdrop'
 			);
-			const dialogElementBlock =
-				dialogBackdropBlock?.innerBlocks?.find(
-					( innerBlock ) => innerBlock.name === 'core/dialog-element'
-				);
+			const dialogElementBlock = dialogBackdropBlock?.innerBlocks?.find(
+				( innerBlock ) => innerBlock.name === 'core/dialog-element'
+			);
 			const dialogElementId = dialogElementBlock?.clientId;
 
 			return {
