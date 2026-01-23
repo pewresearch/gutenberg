@@ -34,7 +34,7 @@ function render_block_core_dialog_trigger( $attributes, $content, $block ) {
 				'type'                        => 'button',
 			)
 		),
-		$content,
+		$content
 	);
 }
 
