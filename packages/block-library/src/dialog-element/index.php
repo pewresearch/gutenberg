@@ -13,11 +13,11 @@
  * @param mixed $qvars Query vars.
  * @return mixed
  */
-function block_core_dialog_add_query_var( $qvars ) {
+function block_core_dialog_element_add_query_var( $qvars ) {
 	$qvars[] = 'dialogId';
 	return $qvars;
 }
-add_filter( 'query_vars', 'block_core_dialog_add_query_var' );
+add_filter( 'query_vars', 'block_core_dialog_element_add_query_var' );
 
 /**
  * Build inline CSS custom properties for animation settings.
@@ -26,7 +26,7 @@ add_filter( 'query_vars', 'block_core_dialog_add_query_var' );
  *
  * @return string Inline CSS string.
  */
-function block_core_dialog_generate_animation_styles( array $attributes ): string {
+function block_core_dialog_element_generate_animation_styles( array $attributes ): string {
 	$animation_duration = $attributes['animationDuration'] ?? 500;
 	$animation_styles   = "--wp--style--dialog-animation-duration: {$animation_duration}ms;";
 
@@ -40,7 +40,7 @@ function block_core_dialog_generate_animation_styles( array $attributes ): strin
  *
  * @return string CSS value for backdrop color or empty string.
  */
-function block_core_dialog_get_backdrop_color_from_context( WP_Block $block ): string {
+function block_core_dialog_element_get_backdrop_color_from_context( WP_Block $block ): string {
 	// Check for preset background color from context.
 	$backdrop_color = $block->context['core/dialog-backdrop-color'] ?? null;
 	if ( $backdrop_color ) {
@@ -68,7 +68,7 @@ function block_core_dialog_get_backdrop_color_from_context( WP_Block $block ): s
  *
  * @return string Inline CSS string.
  */
-function block_core_dialog_generate_position_styles( array $attributes ): string {
+function block_core_dialog_element_generate_position_styles( array $attributes ): string {
 	$dialog_position = $attributes['dialogPosition'] ?? 'center';
 
 	$position_styles = '';
@@ -146,24 +146,27 @@ function render_block_core_dialog_element( array $attributes, string $content, W
 	$enable_deep_link        = array_key_exists( 'enableDeepLink', $attributes ) ? $attributes['enableDeepLink'] : false;
 
 	// By using state any 3rd party can interact as easy as `store('core/dialog').state.dialogs.[blockId].isOpen = true;` which would open the dialog given the blockId.
-	wp_interactivity_state( 'core/dialog/private', array(
-		'dialogs' => array(
-			$context_id => array(
-				'id'                      => $context_id,
-				'activationTimerDuration' => (int) $auto_activation_timer,
-				'animationDuration'       => (int) $animation_duration,
-				'isOpen'                  => $is_open,
-				'enableDeepLink'          => $enable_deep_link,
-				'isClosing'               => false,
-			)
+	wp_interactivity_state(
+		'core/dialog/private',
+		array(
+			'dialogs' => array(
+				$context_id => array(
+					'id'                      => $context_id,
+					'activationTimerDuration' => (int) $auto_activation_timer,
+					'animationDuration'       => (int) $animation_duration,
+					'isOpen'                  => $is_open,
+					'enableDeepLink'          => $enable_deep_link,
+					'isClosing'               => false,
+				),
+			),
 		)
-	) );
+	);
 
 	// Get backdrop color from dialog-backdrop parent block context.
-	$backdrop_color = block_core_dialog_get_backdrop_color_from_context( $block );
+	$backdrop_color = block_core_dialog_element_get_backdrop_color_from_context( $block );
 
-	$block_styles  = block_core_dialog_generate_animation_styles( $attributes );
-	$block_styles .= ' ' . block_core_dialog_generate_position_styles( $attributes );
+	$block_styles  = block_core_dialog_element_generate_animation_styles( $attributes );
+	$block_styles .= ' ' . block_core_dialog_element_generate_position_styles( $attributes );
 
 	// Add backdrop color as CSS variable if available.
 	if ( ! empty( $backdrop_color ) ) {
@@ -213,7 +216,7 @@ function render_block_core_dialog_element( array $attributes, string $content, W
 
 	$close_button = wp_sprintf(
 		'<button class="wp-block-dialog-element__close-button" data-wp-on--click="actions.onClickClose" type="button" aria-label="Close dialog">%1$s</button>',
-		$close_icon,
+		$close_icon
 	);
 
 	return wp_sprintf(
@@ -248,4 +251,4 @@ function register_block_core_dialog_element() {
 		)
 	);
 }
-add_action('init', 'register_block_core_dialog_element');
+add_action( 'init', 'register_block_core_dialog_element' );
