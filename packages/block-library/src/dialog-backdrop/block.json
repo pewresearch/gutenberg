@@ -1,0 +1,34 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "core/dialog-backdrop",
+	"version": "1.0.0",
+	"title": "Dialog Backdrop",
+	"description": "A backdrop container for the dialog element that supports background styling.",
+	"category": "media",
+	"__experimental": true,
+	"attributes": {},
+	"supports": {
+		"html": false,
+		"align": false,
+		"inserter": false,
+		"color": {
+			"background": true,
+			"text": false,
+			"gradients": true,
+			"enableContrastChecker": false
+		},
+		"interactivity": true
+	},
+	"usesContext": [ "core/dialog-id" ],
+	"providesContext": {
+		"core/dialog-backdrop-color": "backgroundColor",
+		"core/dialog-backdrop-custom-color": "style"
+	},
+	"allowedBlocks": [ "core/dialog-element" ],
+	"parent": [ "core/dialog" ],
+	"textdomain": "dialog-backdrop",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

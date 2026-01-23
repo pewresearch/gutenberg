@@ -11,7 +11,6 @@ import { useRef, useEffect } from '@wordpress/element';
 import {
 	useBlockProps,
 	useInnerBlocksProps,
-	withColors,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { KeyboardShortcuts } from '@wordpress/components';
@@ -24,15 +23,7 @@ import { Toolbar, InspectorPanel } from './controls';
 import StyleEngine from './style-engine';
 import { STORE_NAME } from '../dialog/store';
 
-function Edit( {
-	attributes,
-	setAttributes,
-	context,
-	clientId,
-	className,
-	backdropColor,
-	setBackdropColor,
-} ) {
+function Edit( { attributes, setAttributes, context, clientId, className } ) {
 	const { dialogSize = 'medium', animation = 'fade' } = attributes;
 	const { selectBlock } = useDispatch( blockEditorStore );
 	const { init, destroy, open, close } = useDispatch( STORE_NAME );
@@ -121,10 +112,6 @@ function Edit( {
 			<dialog { ...blockProps }>
 				<StyleEngine attributes={ attributes } clientId={ clientId } />
 				<InspectorPanel
-					colors={ {
-						backdropColor,
-						setBackdropColor,
-					} }
 					openDialog={ openDialog }
 					closeDialog={ closeDialog }
 					clientId={ clientId }
@@ -152,4 +139,4 @@ function Edit( {
 	);
 }
 
-export default withColors( { backdropColor: 'backdrop-color' } )( Edit );
+export default Edit;

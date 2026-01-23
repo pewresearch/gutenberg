@@ -20,31 +20,6 @@ function block_core_dialog_add_query_var( $qvars ) {
 add_filter( 'query_vars', 'block_core_dialog_add_query_var' );
 
 /**
- * Build inline CSS custom properties for backdrop color settings.
- *
- * @param array $attributes Block attributes.
- *
- * @return string Inline CSS string.
- */
-function block_core_dialog_generate_color_styles( array $attributes ): string {
-	$custom_backdrop_color = $attributes['customBackdropColor'] ?? '';
-
-	$styles = array(
-		'--wp--style--dialog-backdrop-color' => $custom_backdrop_color,
-	);
-
-	$style_string = array_map(
-		static function ( string $key, string $value ): string {
-			return ! empty( $value ) ? $key . ': ' . $value . ';' : '';
-		},
-		array_keys( $styles ),
-		$styles
-	);
-
-	return implode( ' ', array_filter( $style_string ) );
-}
-
-/**
  * Build inline CSS custom properties for animation settings.
  *
  * @param array $attributes Block attributes.
@@ -56,6 +31,34 @@ function block_core_dialog_generate_animation_styles( array $attributes ): strin
 	$animation_styles   = "--wp--style--dialog-animation-duration: {$animation_duration}ms;";
 
 	return $animation_styles;
+}
+
+/**
+ * Get the backdrop color from context provided by dialog-backdrop block.
+ *
+ * @param WP_Block $block Block instance.
+ *
+ * @return string CSS value for backdrop color or empty string.
+ */
+function block_core_dialog_get_backdrop_color_from_context( WP_Block $block ): string {
+	// Check for preset background color from context.
+	$backdrop_color = $block->context['core/dialog-backdrop-color'] ?? null;
+	if ( $backdrop_color ) {
+		return 'var(--wp--preset--color--' . $backdrop_color . ')';
+	}
+
+	// Check for custom color from style context.
+	$style_context = $block->context['core/dialog-backdrop-custom-color'] ?? null;
+	if ( is_array( $style_context ) && isset( $style_context['color']['background'] ) ) {
+		return $style_context['color']['background'];
+	}
+
+	// Check for gradient from style context.
+	if ( is_array( $style_context ) && isset( $style_context['color']['gradient'] ) ) {
+		return $style_context['color']['gradient'];
+	}
+
+	return '';
 }
 
 /**
@@ -156,10 +159,18 @@ function render_block_core_dialog_element( array $attributes, string $content, W
 		)
 	) );
 
+	// Get backdrop color from dialog-backdrop parent block context.
+	$backdrop_color = block_core_dialog_get_backdrop_color_from_context( $block );
+
 	$block_styles  = block_core_dialog_generate_animation_styles( $attributes );
-	$block_styles .= ' ' . block_core_dialog_generate_color_styles( $attributes );
 	$block_styles .= ' ' . block_core_dialog_generate_position_styles( $attributes );
-	$block_styles  = trim( $block_styles );
+
+	// Add backdrop color as CSS variable if available.
+	if ( ! empty( $backdrop_color ) ) {
+		$block_styles .= ' --wp--style--dialog-backdrop-color: ' . $backdrop_color . ';';
+	}
+
+	$block_styles = trim( $block_styles );
 
 	$aria_labelledby = '';
 	// Check if $content contains any <h*> tags, and if so, add the id of the first one to aria-labelledby.

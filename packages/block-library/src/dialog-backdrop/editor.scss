@@ -1,0 +1,23 @@
+.wp-block-dialog-backdrop {
+	// In the editor, we don't want fixed positioning
+	// The backdrop should be visible as a container
+	position: relative;
+	inset: unset;
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+
+	// Minimum height to show the backdrop in the editor
+	min-height: 100px;
+
+	// Reset cursor in editor
+	cursor: default;
+
+	// Inherit border radius for outline mode
+	&.wp-block {
+		&:not(.remove-outline).is-hovered:not(.is-selected)::after,
+		&:not(.remove-outline):not(.rich-text):not([contenteditable="true"]).is-selected::after {
+			border-radius: inherit !important;
+		}
+	}
+}

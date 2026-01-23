@@ -11,12 +11,6 @@
 			"type": "string",
 			"default": ""
 		},
-		"backdropColor": {
-			"type": "string"
-		},
-		"customBackdropColor": {
-			"type": "string"
-		},
 		"autoActivateOnRender": {
 			"type": "boolean",
 			"default": false
@@ -103,11 +97,11 @@
 		},
 		"interactivity": true
 	},
-	"usesContext": [ "core/dialog-id" ],
+	"usesContext": [ "core/dialog-id", "core/dialog-backdrop-color", "core/dialog-backdrop-custom-color" ],
 	"providesContext": {
 		"core/dialog-label": "dialogLabel"
 	},
-	"parent": [ "core/dialog" ],
+	"parent": [ "core/dialog-backdrop" ],
 	"textdomain": "dialog-element",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",

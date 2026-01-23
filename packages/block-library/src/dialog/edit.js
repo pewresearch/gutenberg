@@ -44,7 +44,7 @@ const TEMPLATE = [
 		],
 	],
 	[
-		'core/dialog-element',
+		'core/dialog-backdrop',
 		{
 			lock: {
 				move: true,
@@ -53,32 +53,49 @@ const TEMPLATE = [
 		},
 		[
 			[
-				'core/heading',
+				'core/dialog-element',
 				{
-					level: 2,
-					placeholder: __( 'Add a dialog label…' ),
-					metadata: {
-						bindings: {
-							content: {
-								source: 'core/dialog-element-label',
-							},
-						},
+					lock: {
+						move: true,
+						remove: true,
 					},
 				},
+				[
+					[
+						'core/heading',
+						{
+							level: 2,
+							placeholder: __( 'Add a dialog label…' ),
+							metadata: {
+								bindings: {
+									content: {
+										source: 'core/dialog-element-label',
+									},
+								},
+							},
+						},
+					],
+				],
 			],
 		],
 	],
 ];
 
 export default function Edit( { attributes, setAttributes, clientId } ) {
-	// Get the dialog-element block from inner blocks.
+	// Get the dialog-element block from inner blocks (nested inside dialog-backdrop).
 	const { dialogElementClientId, isDialogOpen } = useSelect(
 		( select ) => {
 			const { getBlock } = select( blockEditorStore );
 			const block = getBlock( clientId );
-			const dialogElementBlock = block?.innerBlocks?.find(
-				( innerBlock ) => innerBlock.name === 'core/dialog-element'
+
+			// Find dialog-backdrop first, then find dialog-element inside it
+			const dialogBackdropBlock = block?.innerBlocks?.find(
+				( innerBlock ) => innerBlock.name === 'core/dialog-backdrop'
 			);
+			const dialogElementBlock =
+				dialogBackdropBlock?.innerBlocks?.find(
+					( innerBlock ) => innerBlock.name === 'core/dialog-element'
+				);
 			const dialogElementId = dialogElementBlock?.clientId;
 
 			return {

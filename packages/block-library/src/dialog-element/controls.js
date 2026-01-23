@@ -7,8 +7,6 @@ import {
 	InspectorControls,
 	BlockControls,
 	__experimentalBlockAlignmentMatrixControl as BlockAlignmentMatrixControl,
-	__experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-	__experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import {
@@ -79,25 +77,14 @@ export function Toolbar( {
 	);
 }
 
-export function InspectorPanel( {
-	colors,
-	clientId,
-	attributes,
-	setAttributes,
-} ) {
+export function InspectorPanel( { clientId, attributes, setAttributes } ) {
 	const {
 		autoActivationTimer = -1,
 		animationDuration = 500,
 		animation = 'fade',
 		dialogSize = 'medium',
-		customBackdropColor,
 		enableDeepLink = false,
 	} = attributes || {};
-	/**
-	 * Setup the icon and label for the block toolbar.
-	 */
-	const { backdropColor, setBackdropColor } = colors;
-	const colorSettings = useMultipleOriginColorsAndGradients();
 
 	return (
 		<>
@@ -233,28 +220,6 @@ export function InspectorPanel( {
 						value={ animationDuration }
 					/>
 				</PanelBody>
-			</InspectorControls>
-			<InspectorControls group="color">
-				<ColorGradientSettingsDropdown
-					settings={ [
-						{
-							label: __( 'Backdrop' ),
-							colorValue:
-								backdropColor?.color ?? customBackdropColor,
-							onColorChange: ( value ) => {
-								setBackdropColor( value );
-								setAttributes( {
-									customBackdropColor: value,
-								} );
-							},
-						},
-					] }
-					panelId={ clientId }
-					hasColorsOrGradients={ false }
-					disableCustomColors={ false }
-					__experimentalIsRenderedInSidebar
-					{ ...colorSettings }
-				/>
 			</InspectorControls>
 		</>
 	);

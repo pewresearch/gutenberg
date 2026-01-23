@@ -38,8 +38,8 @@
 
 	&::backdrop {
 		cursor: zoom-out;
-		background-color: var(--wp--style--dialog-backdrop-color, var(--wp--style--dialog-backdrop-color, rgba(0, 0, 0, 0.8)));
-		opacity: 0.5;
+		// Use CSS variable from dialog-backdrop block, with fallback
+		background-color: var(--wp--style--dialog-backdrop-color, rgba(0, 0, 0, 0.8));
 
 		// Enhanced backdrop transitions with independent timing
 		transition:

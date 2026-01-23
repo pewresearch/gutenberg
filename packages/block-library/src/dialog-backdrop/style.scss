@@ -1,0 +1,37 @@
+.wp-block-dialog-backdrop {
+	// Default semi-transparent black backdrop
+	--wp--style--dialog-backdrop-default-color: rgba(0, 0, 0, 0.8);
+
+	// Position fixed to cover the entire viewport
+	position: fixed;
+	inset: 0;
+	z-index: 9;
+
+	// Use background support color or fallback to default
+	background-color: var(--wp--style--dialog-backdrop-default-color);
+
+	// Flex centering for dialog element
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	// Cursor indicates clickable to close
+	cursor: zoom-out;
+
+	// Hidden by default
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+
+	// Smooth transitions
+	transition:
+		opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+		visibility 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+	// When dialog is open
+	&.is-dialog-open {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+	}
+}

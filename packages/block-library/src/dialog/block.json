@@ -14,7 +14,7 @@
 	"__experimental": true,
 	"allowedBlocks": [
 		"core/dialog-trigger",
-		"core/dialog-element"
+		"core/dialog-backdrop"
 	],
 	"attributes": {},
 	"supports": {

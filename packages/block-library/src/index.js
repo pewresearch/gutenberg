@@ -51,6 +51,7 @@ import * as commentsTitle from './comments-title';
 import * as cover from './cover';
 import * as details from './details';
 import * as dialog from './dialog';
+import * as dialogBackdrop from './dialog-backdrop';
 import * as dialogElement from './dialog-element';
 import * as dialogTrigger from './dialog-trigger';
 import * as embed from './embed';
@@ -250,6 +251,7 @@ const getAllBlocks = () => {
 		blocks.push( accordionHeader );
 		blocks.push( accordionPanel );
 		blocks.push( dialog );
+		blocks.push( dialogBackdrop );
 		blocks.push( dialogElement );
 		blocks.push( dialogTrigger );
 		blocks.push( termsQuery );
