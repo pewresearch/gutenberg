@@ -42,7 +42,7 @@ add_filter( 'render_block_context', 'block_core_dialog_id_fallback', 10, 2 );
  */
 function render_block_core_dialog( $attributes, $content, $block ) {
 	$block_context = $block->context;
-	$block_id = array_key_exists( 'core/dialog-id', $block_context ) ? $block_context['core/dialog-id'] : false;
+	$block_id      = array_key_exists( 'core/dialog-id', $block_context ) ? $block_context['core/dialog-id'] : false;
 
 	if ( ! $block_id ) {
 		_doing_it_wrong( 'render_block_core_dialog', esc_html__( 'The core/dialog block requires an id via block context.', 'default' ), '1.0.0' );

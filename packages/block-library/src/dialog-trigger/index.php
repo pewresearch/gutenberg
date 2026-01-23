@@ -14,7 +14,7 @@
  * @return string HTML.
  */
 function render_block_core_dialog_trigger( $attributes, $content, $block ) {
-	$context_id = isset( $block->context['core/dialog-id'] ) ? $block->context['core/dialog-id'] : null;
+	$context_id       = isset( $block->context['core/dialog-id'] ) ? $block->context['core/dialog-id'] : null;
 	$trigger_template = '<button %1$s>%2$s</button>';
 	// @TODO: This is temporary test code during PR review phase.
 	if ( WP_DEBUG ) {
