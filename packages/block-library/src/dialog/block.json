@@ -6,32 +6,25 @@
 	"title": "Dialog",
 	"description": "Render content in a <dialog/> element modal. Includes a trigger to open the dialog, and dialog element to render content.",
 	"category": "media",
-	"keywords": [
-		"dialog",
-		"modal",
-		"popup"
-	],
+	"keywords": [ "dialog", "modal", "popup" ],
 	"__experimental": true,
-	"allowedBlocks": [
-		"core/dialog-trigger",
-		"core/dialog-backdrop"
-	],
-	"attributes": {},
+	"allowedBlocks": [ "core/dialog-trigger", "core/dialog-backdrop" ],
+	"attributes": {
+		"editorIsOpen": {
+			"type": "boolean",
+			"role": "local"
+		}
+	},
+	"providesContext": {
+		"core/dialog-is-open": "editorIsOpen"
+	},
 	"supports": {
 		"anchor": true,
 		"html": false,
-		"align": [
-			"full",
-			"wide",
-			"left",
-			"right",
-			"center"
-		],
+		"align": [ "full", "wide", "left", "right", "center" ],
 		"interactivity": true
 	},
-	"usesContext": [
-		"core/dialog-id"
-	],
+	"usesContext": [ "core/dialog-id" ],
 	"textdomain": "dialog",
 	"editorScript": "file:./index.js"
 }

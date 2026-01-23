@@ -97,7 +97,12 @@
 		},
 		"interactivity": true
 	},
-	"usesContext": [ "core/dialog-id", "core/dialog-backdrop-color", "core/dialog-backdrop-custom-color" ],
+	"usesContext": [
+		"core/dialog-id",
+		"core/dialog-is-open",
+		"core/dialog-backdrop-color",
+		"core/dialog-backdrop-custom-color"
+	],
 	"providesContext": {
 		"core/dialog-label": "dialogLabel"
 	},

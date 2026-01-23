@@ -17,12 +17,8 @@ import {
 	ToolbarGroup,
 	PanelBody,
 } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 
-/**
- * Internal dependencies
- */
-import { STORE_NAME } from './store';
 const TEMPLATE = [
 	[
 		'core/dialog-trigger',
@@ -81,9 +77,11 @@ const TEMPLATE = [
 	],
 ];
 
-export default function Edit( { clientId } ) {
-	// Get the dialog-element block from inner blocks (nested inside dialog-backdrop).
-	const { dialogElementClientId, isDialogOpen } = useSelect(
+export default function Edit( { attributes, setAttributes, clientId } ) {
+	const { editorIsOpen = false } = attributes;
+
+	// Get the dialog-element block clientId from inner blocks (nested inside dialog-backdrop).
+	const dialogElementClientId = useSelect(
 		( select ) => {
 			const { getBlock } = select( blockEditorStore );
 			const block = getBlock( clientId );
@@ -95,14 +93,7 @@ export default function Edit( { clientId } ) {
 			const dialogElementBlock = dialogBackdropBlock?.innerBlocks?.find(
 				( innerBlock ) => innerBlock.name === 'core/dialog-element'
 			);
-			const dialogElementId = dialogElementBlock?.clientId;
-
-			return {
-				dialogElementClientId: dialogElementId,
-				isDialogOpen: dialogElementId
-					? select( STORE_NAME ).isOpen( dialogElementId )
-					: false,
-			};
+			return dialogElementBlock?.clientId;
 		},
 		[ clientId ]
 	);
@@ -111,8 +102,8 @@ export default function Edit( { clientId } ) {
 		return `block-${ dialogElementClientId }`;
 	}, [ dialogElementClientId ] );
 
-	// Get store actions
-	const { open, close } = useDispatch( STORE_NAME );
+	const toggleDialog = () =>
+		setAttributes( { editorIsOpen: ! editorIsOpen } );
 
 	// Set up a ref for the block container
 	const ref = useRef( null );
@@ -131,8 +122,8 @@ export default function Edit( { clientId } ) {
 	);
 
 	const buttonLabel = useMemo(
-		() => ( isDialogOpen ? __( 'Close Dialog' ) : __( 'Edit Dialog' ) ),
-		[ isDialogOpen ]
+		() => ( editorIsOpen ? __( 'Close Dialog' ) : __( 'Edit Dialog' ) ),
+		[ editorIsOpen ]
 	);
 
 	return (
@@ -141,16 +132,7 @@ export default function Edit( { clientId } ) {
 				<ToolbarGroup>
 					<ToolbarButton
 						label={ buttonLabel }
-						onClick={ () => {
-							if ( ! dialogElementClientId ) {
-								return;
-							}
-							if ( isDialogOpen ) {
-								close( dialogElementClientId );
-							} else {
-								open( dialogElementClientId );
-							}
-						} }
+						onClick={ toggleDialog }
 					>
 						{ buttonLabel }
 					</ToolbarButton>
@@ -167,19 +149,9 @@ export default function Edit( { clientId } ) {
 						<Button
 							__next40pxDefaultSize
 							variant="tertiary"
-							onClick={ () => {
-								if ( dialogElementClientId ) {
-									if ( isDialogOpen ) {
-										close( dialogElementClientId );
-									} else {
-										open( dialogElementClientId );
-									}
-								}
-							} }
-							disabled={ ! dialogElementClientId }
-							accessibleWhenDisabled
+							onClick={ toggleDialog }
 						>
-							{ isDialogOpen
+							{ editorIsOpen
 								? __( 'Close Dialog' )
 								: __( 'Edit Dialog' ) }
 						</Button>

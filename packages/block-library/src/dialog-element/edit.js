@@ -21,40 +21,33 @@ import { useSelect, useDispatch } from '@wordpress/data';
  */
 import { Toolbar, InspectorPanel } from './controls';
 import StyleEngine from './style-engine';
-import { STORE_NAME } from '../dialog/store';
 
-function Edit( { attributes, setAttributes, clientId, className } ) {
+function Edit( { attributes, setAttributes, clientId, context, className } ) {
 	const { dialogSize = 'medium', animation = 'fade' } = attributes;
-	const { selectBlock } = useDispatch( blockEditorStore );
-	const { init, destroy, open, close } = useDispatch( STORE_NAME );
+	const isOpen = context[ 'core/dialog-is-open' ] ?? false;
 
-	const { rootClientId, isOpen, isClosingModal } = useSelect(
+	const { selectBlock, updateBlockAttributes } =
+		useDispatch( blockEditorStore );
+
+	const dialogRootClientId = useSelect(
 		( select ) => {
-			return {
-				rootClientId:
-					select( blockEditorStore ).getBlockRootClientId( clientId ),
-				isOpen: select( STORE_NAME ).isOpen( clientId ),
-				isClosingModal: select( STORE_NAME ).isClosingModal( clientId ),
-			};
+			const { getBlockParentsByBlockName } = select( blockEditorStore );
+			// Get the root dialog block client ID to update its attributes
+			const dialogParents = getBlockParentsByBlockName(
+				clientId,
+				'core/dialog'
+			);
+			return dialogParents[ 0 ] || null;
 		},
 		[ clientId ]
 	);
 
 	/**
-	 * Setup state and ref for the dialog.
+	 * Setup ref for the dialog.
 	 */
 	const dialogElementRef = useRef( null );
 
-	// Initialize dialog in store and cleanup on unmount
-	useEffect( () => {
-		init( clientId );
-
-		return () => {
-			destroy( clientId );
-		};
-	}, [ clientId, init, destroy ] );
-
-	// Sync DOM state with store state
+	// Sync DOM state with context state
 	useEffect( () => {
 		if ( dialogElementRef.current ) {
 			if ( isOpen && ! dialogElementRef.current.open ) {
@@ -68,10 +61,18 @@ function Edit( { attributes, setAttributes, clientId, className } ) {
 	/**
 	 * Helper functions:
 	 */
-	const openDialog = () => open( clientId );
+	const openDialog = () => {
+		if ( dialogRootClientId ) {
+			updateBlockAttributes( dialogRootClientId, { editorIsOpen: true } );
+		}
+	};
 	const closeDialog = () => {
-		close( clientId );
-		selectBlock( rootClientId );
+		if ( dialogRootClientId ) {
+			updateBlockAttributes( dialogRootClientId, {
+				editorIsOpen: false,
+			} );
+			selectBlock( dialogRootClientId );
+		}
 	};
 	const onEscHandler = ( e ) => {
 		e.preventDefault();
@@ -85,7 +86,6 @@ function Edit( { attributes, setAttributes, clientId, className } ) {
 			'is-size-medium': 'medium' === dialogSize,
 			'is-size-large': 'large' === dialogSize,
 			[ `is-animation-${ animation }` ]: animation,
-			'is-closing-modal': isClosingModal,
 		} ),
 		role: 'dialog',
 		'aria-modal': 'true',

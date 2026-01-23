@@ -311,6 +311,7 @@ Render content in a <dialog/> element modal. Includes a trigger to open the dial
 -	**Category:** media
 -	**Allowed Blocks:** core/dialog-trigger, core/dialog-backdrop
 -	**Supports:** align (center, full, left, right, wide), anchor, interactivity, ~~html~~
+-	**Attributes:** editorIsOpen
 
 ## Dialog Backdrop
 

@@ -13,11 +13,6 @@ import {
 } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 
-/**
- * Internal dependencies
- */
-import { STORE_NAME } from '../dialog/store';
-
 const TEMPLATE = [
 	[
 		'core/dialog-element',
@@ -30,36 +25,32 @@ const TEMPLATE = [
 	],
 ];
 
-export default function Edit( { clientId } ) {
-	const { selectBlock } = useDispatch( blockEditorStore );
-	const { close } = useDispatch( STORE_NAME );
+export default function Edit( { clientId, context } ) {
+	const isDialogOpen = context[ 'core/dialog-is-open' ] ?? false;
 
-	const { rootClientId, dialogElementClientId, isDialogOpen } = useSelect(
+	const { selectBlock, updateBlockAttributes } =
+		useDispatch( blockEditorStore );
+
+	// Get the root dialog block client ID to update its attributes
+	const dialogRootClientId = useSelect(
 		( select ) => {
-			const { getBlock, getBlockRootClientId } =
-				select( blockEditorStore );
-			const block = getBlock( clientId );
-			const dialogElementBlock = block?.innerBlocks?.find(
-				( innerBlock ) => innerBlock.name === 'core/dialog-element'
+			const { getBlockParentsByBlockName } = select( blockEditorStore );
+			const dialogParents = getBlockParentsByBlockName(
+				clientId,
+				'core/dialog'
 			);
-			const dialogElementId = dialogElementBlock?.clientId;
-
-			return {
-				rootClientId: getBlockRootClientId( clientId ),
-				dialogElementClientId: dialogElementId,
-				isDialogOpen: dialogElementId
-					? select( STORE_NAME ).isOpen( dialogElementId )
-					: false,
-			};
+			return dialogParents[ 0 ] || null;
 		},
 		[ clientId ]
 	);
 
 	const handleBackdropClick = ( event ) => {
 		// Only close if clicking directly on the backdrop, not on child elements
-		if ( event.target === event.currentTarget && dialogElementClientId ) {
-			close( dialogElementClientId );
-			selectBlock( rootClientId );
+		if ( event.target === event.currentTarget && dialogRootClientId ) {
+			updateBlockAttributes( dialogRootClientId, {
+				editorIsOpen: false,
+			} );
+			selectBlock( dialogRootClientId );
 		}
 	};
 

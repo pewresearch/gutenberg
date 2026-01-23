@@ -299,20 +299,3 @@ store( 'core/dialog', {
 		},
 	},
 } );
-
-// This is a simple test to ensure 3rd party stores can interact with dialogs.
-store( 'core/dialog/test', {
-	actions: {
-		onClickOpen: withSyncEvent( ( event ) => {
-			const dialogContext = getContext( 'core/dialog/private' );
-			const id = dialogContext?.id;
-			if ( ! id ) {
-				console.warn( 'No dialog id found in context.' );
-				return;
-			}
-			store( 'core/dialog' ).actions.open( id );
-			// Check for id.
-			event.preventDefault();
-		} ),
-	},
-} );
