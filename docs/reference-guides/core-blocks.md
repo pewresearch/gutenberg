@@ -782,6 +782,14 @@ Displays the title of a post, page, or any other content-type. ([Source](https:/
 -	**Supports:** align (full, wide), anchor, color (background, gradients, link, text), interactivity (clientNavigation), spacing (margin, padding), typography (fontSize, lineHeight), ~~html~~
 -	**Attributes:** isLink, level, levelOptions, linkTarget, rel, textAlign
 
+## Toplines
+
+Display key findings or summary toplines for the post. ([Source](https://github.com/WordPress/gutenberg/tree/trunk/packages/block-library/src/post-toplines))
+
+-	**Name:** core/post-toplines
+-	**Category:** theme
+-	**Supports:** anchor, color (background, gradients, link, text), interactivity (clientNavigation), spacing (margin, padding), typography (fontSize, lineHeight), ~~html~~
+
 ## Preformatted
 
 Add text that respects your spacing and tabs, and also allows styling. ([Source](https://github.com/WordPress/gutenberg/tree/trunk/packages/block-library/src/preformatted))

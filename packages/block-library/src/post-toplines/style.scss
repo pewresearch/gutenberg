@@ -1,0 +1,26 @@
+.wp-block-post-toplines {
+	&__list {
+		list-style-type: disc;
+		padding-left: var(--wp--style--block-gap, 1.5em);
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	&__item {
+		margin-bottom: 0.5em;
+	}
+
+	&__item:last-child {
+		margin-bottom: 0;
+	}
+
+	&__text {
+		display: inline;
+	}
+
+	&__empty-state {
+		p {
+			margin-bottom: 0.5em;
+		}
+	}
+}
