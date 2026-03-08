@@ -399,4 +399,230 @@ class WP_Block_Supports_Block_Visibility_Test extends WP_UnitTestCase {
 
 		$this->assertSame( '', $result, 'Block content should be empty when there is no content.' );
 	}
+
+	public function test_register_block_visibility_condition() {
+		$slug = 'testCondition';
+		$args = array(
+			'label'           => 'Test Condition',
+			'render_callback' => function ( $block_content, $block, $condition_value ) {
+				return $block_content;
+			},
+		);
+
+		$result = register_block_visibility_condition( $slug, $args );
+
+		$this->assertTrue( $result, 'Condition should be registered successfully.' );
+
+		$registry = WP_Block_Visibility_Conditions_Registry::get_instance();
+		$this->assertTrue( $registry->is_registered( $slug ), 'Registered condition should be in registry.' );
+
+		// Clean up.
+		unregister_block_visibility_condition( $slug );
+	}
+
+	public function test_register_duplicate_block_visibility_condition() {
+		$slug = 'duplicateCondition';
+		$args = array(
+			'label'           => 'Duplicate Condition',
+			'render_callback' => function ( $block_content ) {
+				return $block_content;
+			},
+		);
+
+		register_block_visibility_condition( $slug, $args );
+		$result = register_block_visibility_condition( $slug, $args );
+
+		$this->assertFalse( $result, 'Duplicate registration should fail.' );
+
+		// Clean up.
+		unregister_block_visibility_condition( $slug );
+	}
+
+	public function test_unregister_block_visibility_condition() {
+		$slug = 'toUnregister';
+		$args = array(
+			'label'           => 'To Unregister',
+			'render_callback' => function ( $block_content ) {
+				return $block_content;
+			},
+		);
+
+		register_block_visibility_condition( $slug, $args );
+		$result = unregister_block_visibility_condition( $slug );
+
+		$this->assertTrue( $result, 'Condition should be unregistered successfully.' );
+
+		$registry = WP_Block_Visibility_Conditions_Registry::get_instance();
+		$this->assertFalse( $registry->is_registered( $slug ), 'Unregistered condition should not be in registry.' );
+	}
+
+	public function test_custom_visibility_condition_hides_block() {
+		$this->register_visibility_block_with_support(
+			'test/custom-condition',
+			array( 'visibility' => true )
+		);
+
+		// Register a custom condition that hides the block.
+		register_block_visibility_condition(
+			'testHide',
+			array(
+				'label'           => 'Test Hide',
+				'render_callback' => function ( $block_content, $block, $condition_value ) {
+					if ( isset( $condition_value['hide'] ) && true === $condition_value['hide'] ) {
+						return '';
+					}
+					return $block_content;
+				},
+			)
+		);
+
+		$block = array(
+			'blockName' => 'test/custom-condition',
+			'attrs'     => array(
+				'metadata' => array(
+					'blockVisibility' => array(
+						'testHide' => array(
+							'hide' => true,
+						),
+					),
+				),
+			),
+		);
+
+		$block_content = '<div>Test content</div>';
+		$result        = gutenberg_render_block_visibility_support( $block_content, $block );
+
+		$this->assertSame( '', $result, 'Block should be hidden by custom condition.' );
+
+		// Clean up.
+		unregister_block_visibility_condition( 'testHide' );
+	}
+
+	public function test_custom_visibility_condition_shows_block() {
+		$this->register_visibility_block_with_support(
+			'test/custom-show',
+			array( 'visibility' => true )
+		);
+
+		// Register a custom condition that shows the block.
+		register_block_visibility_condition(
+			'testShow',
+			array(
+				'label'           => 'Test Show',
+				'render_callback' => function ( $block_content, $block, $condition_value ) {
+					if ( isset( $condition_value['hide'] ) && false === $condition_value['hide'] ) {
+						return $block_content;
+					}
+					return '';
+				},
+			)
+		);
+
+		$block = array(
+			'blockName' => 'test/custom-show',
+			'attrs'     => array(
+				'metadata' => array(
+					'blockVisibility' => array(
+						'testShow' => array(
+							'hide' => false,
+						),
+					),
+				),
+			),
+		);
+
+		$block_content = '<div>Test content</div>';
+		$result        = gutenberg_render_block_visibility_support( $block_content, $block );
+
+		$this->assertSame( $block_content, $result, 'Block should be shown by custom condition.' );
+
+		// Clean up.
+		unregister_block_visibility_condition( 'testShow' );
+	}
+
+	public function test_multiple_conditions_combined() {
+		$this->register_visibility_block_with_support(
+			'test/multiple-conditions',
+			array( 'visibility' => true )
+		);
+
+		// Register a custom condition.
+		register_block_visibility_condition(
+			'testMultiple',
+			array(
+				'label'           => 'Test Multiple',
+				'render_callback' => function ( $block_content, $block, $condition_value ) {
+					if ( isset( $condition_value['allowed'] ) && false === $condition_value['allowed'] ) {
+						return '';
+					}
+					return $block_content;
+				},
+			)
+		);
+
+		$block = array(
+			'blockName' => 'test/multiple-conditions',
+			'attrs'     => array(
+				'metadata' => array(
+					'blockVisibility' => array(
+						'viewport'     => array(
+							'mobile' => true,
+							'tablet' => true,
+						),
+						'testMultiple' => array(
+							'allowed' => true,
+						),
+					),
+				),
+			),
+		);
+
+		$block_content = '<div>Test content</div>';
+		$result        = gutenberg_render_block_visibility_support( $block_content, $block );
+
+		$this->assertSame( $block_content, $result, 'Block should be shown when both conditions allow.' );
+
+		// Clean up.
+		unregister_block_visibility_condition( 'testMultiple' );
+	}
+
+	public function test_custom_condition_ignored_when_not_in_metadata() {
+		$this->register_visibility_block_with_support(
+			'test/no-custom-metadata',
+			array( 'visibility' => true )
+		);
+
+		// Register a custom condition that would hide the block.
+		register_block_visibility_condition(
+			'testIgnored',
+			array(
+				'label'           => 'Test Ignored',
+				'render_callback' => function ( $block_content, $block, $condition_value ) {
+					// This should never be called.
+					return '';
+				},
+			)
+		);
+
+		$block = array(
+			'blockName' => 'test/no-custom-metadata',
+			'attrs'     => array(
+				'metadata' => array(
+					'blockVisibility' => array(
+						'viewport' => array(
+							'mobile' => true,
+						),
+					),
+				),
+			),
+		);
+
+		$block_content = '<div>Test content</div>';
+		$result        = gutenberg_render_block_visibility_support( $block_content, $block );
+
+		$this->assertSame( $block_content, $result, 'Block should be shown when custom condition is not in metadata.' );
+
+		// Clean up.
+		unregister_block_visibility_condition( 'testIgnored' );
+	}
 }

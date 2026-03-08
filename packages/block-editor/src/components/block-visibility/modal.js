@@ -28,23 +28,15 @@ import { store as noticesStore } from '@wordpress/notices';
 /**
  * Internal dependencies
  */
-import {
-	BLOCK_VISIBILITY_VIEWPORT_ENTRIES,
-	BLOCK_VISIBILITY_VIEWPORTS,
-} from './constants';
+import { getRegisteredConditions } from './condition-registry';
 import { store as blockEditorStore } from '../../store';
 import { cleanEmptyObject } from '../../hooks/utils';
 import {
 	getViewportCheckboxState,
 	getHideEverywhereCheckboxState,
 } from './utils';
+import ConditionSection from './condition-section';
 import './style.scss';
-
-const DEFAULT_VIEWPORT_CHECKBOX_VALUES = {
-	[ BLOCK_VISIBILITY_VIEWPORTS.mobile.key ]: false,
-	[ BLOCK_VISIBILITY_VIEWPORTS.tablet.key ]: false,
-	[ BLOCK_VISIBILITY_VIEWPORTS.desktop.key ]: false,
-};
 
 const EMPTY_BLOCKS = [];
 
