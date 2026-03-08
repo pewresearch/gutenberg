@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { BLOCK_VISIBILITY_VIEWPORT_ENTRIES } from './constants';
+import { getRegisteredConditions } from './condition-registry';
 
 /**
  * Checks if a block is hidden for a specific viewport.
@@ -108,7 +109,7 @@ export function getHideEverywhereCheckboxState( blocks ) {
 }
 
 /**
- * Get a human-readable label describing which viewports a block is hidden on.
+ * Get a human-readable label describing visibility conditions for a block.
  *
  * @param {boolean|Object} blockVisibility The block's visibility metadata.
  * @return {string|null} A descriptive label, or null if the block is not hidden.
@@ -124,19 +125,30 @@ export function getBlockVisibilityLabel( blockVisibility ) {
 		return __( 'Block is hidden' );
 	}
 
-	if ( blockVisibility?.viewport ) {
-		// Hidden on specific viewports - list them
-		const hiddenViewports = BLOCK_VISIBILITY_VIEWPORT_ENTRIES.filter(
-			( [ key ] ) => blockVisibility.viewport?.[ key ] === false
-		).map( ( [ , viewport ] ) => viewport.label );
+	// Collect labels from all registered conditions.
+	const registeredConditions = getRegisteredConditions();
+	const hiddenLabels = [];
 
-		if ( hiddenViewports.length > 0 ) {
-			return sprintf(
-				/* translators: %s: comma-separated list of viewport names (Desktop, Tablet, Mobile) */
-				__( 'Block is hidden on %s' ),
-				hiddenViewports.join( ', ' )
-			);
+	registeredConditions.forEach( ( condition ) => {
+		const conditionData = blockVisibility[ condition.slug ];
+		if ( conditionData && typeof conditionData === 'object' ) {
+			// Find which options are hidden (value === false).
+			const hiddenOptions = condition.options
+				.filter( ( { key } ) => conditionData[ key ] === false )
+				.map( ( { label } ) => label );
+
+			if ( hiddenOptions.length > 0 ) {
+				hiddenLabels.push( ...hiddenOptions );
+			}
 		}
+	} );
+
+	if ( hiddenLabels.length > 0 ) {
+		return sprintf(
+			/* translators: %s: comma-separated list of conditions (Desktop, Tablet, Mobile, etc.) */
+			__( 'Block is hidden on %s' ),
+			hiddenLabels.join( ', ' )
+		);
 	}
 
 	return null;

@@ -18,7 +18,6 @@ import {
 	CheckboxControl,
 	Flex,
 	FlexItem,
-	Icon,
 	Modal,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -41,9 +40,9 @@ import './style.scss';
 const EMPTY_BLOCKS = [];
 
 /**
- * Modal component for configuring block visibility across viewports.
+ * Modal component for configuring block visibility conditions.
  *
- * Allows users to hide blocks on specific viewport sizes (mobile, tablet, desktop)
+ * Allows users to hide blocks based on registered visibility conditions (viewport, user role, etc.)
  * or hide them everywhere. When editing multiple blocks, checkboxes only show as
  * checked if ALL selected blocks share the same setting to avoid ambiguity.
  *
@@ -55,6 +54,11 @@ const EMPTY_BLOCKS = [];
 export default function BlockVisibilityModal( { clientIds, onClose } ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { updateBlockAttributes } = useDispatch( blockEditorStore );
+
+	const registeredConditions = useMemo(
+		() => getRegisteredConditions(),
+		[]
+	);
 
 	const blocks = useSelect(
 		( select ) =>
@@ -68,41 +72,80 @@ export default function BlockVisibilityModal( { clientIds, onClose } ) {
 		);
 	}, [] );
 
-	const initialViewportValues = useMemo( () => {
+	/**
+	 * Build initial state for all registered conditions based on current block metadata.
+	 */
+	const initialConditionStates = useMemo( () => {
 		if ( blocks?.length === 0 ) {
 			return {
 				hideEverywhere: false,
-				viewportChecked: {},
+				conditionStates: {},
 			};
 		}
 
-		const viewportValues = {};
+		const conditionStates = {};
 
-		BLOCK_VISIBILITY_VIEWPORT_ENTRIES.forEach( ( [ , { key } ] ) => {
-			viewportValues[ key ] = getViewportCheckboxState( blocks, key );
+		// For each registered condition, build the initial checkbox states.
+		registeredConditions.forEach( ( condition ) => {
+			const conditionValues = {};
+
+			condition.options.forEach( ( { key } ) => {
+				// Use the generic getViewportCheckboxState for viewport condition,
+				// or initialize to false for other conditions.
+				if ( condition.slug === 'viewport' ) {
+					conditionValues[ key ] = getViewportCheckboxState(
+						blocks,
+						key
+					);
+				} else {
+					// For non-viewport conditions, check each block's metadata.
+					// This is a generic approach for custom conditions.
+					const hiddenCount = blocks.filter( ( block ) => {
+						const blockVisibility =
+							block.attributes?.metadata?.blockVisibility;
+						return (
+							blockVisibility?.[ condition.slug ]?.[ key ] ===
+							false
+						);
+					} ).length;
+
+					if ( hiddenCount === 0 ) {
+						conditionValues[ key ] = false;
+					} else if ( hiddenCount === blocks.length ) {
+						conditionValues[ key ] = true;
+					} else {
+						conditionValues[ key ] = null; // Indeterminate
+					}
+				}
+			} );
+
+			conditionStates[ condition.slug ] = conditionValues;
 		} );
 
 		return {
 			hideEverywhere: getHideEverywhereCheckboxState( blocks ),
-			viewportChecked: viewportValues,
+			conditionStates,
 		};
-	}, [ blocks ] );
+	}, [ blocks, registeredConditions ] );
 
-	const [ viewportChecked, setViewportChecked ] = useState(
-		initialViewportValues?.viewportChecked ?? {}
+	const [ conditionStates, setConditionStates ] = useState(
+		initialConditionStates?.conditionStates ?? {}
 	);
 	const [ hideEverywhere, setHideEverywhere ] = useState(
-		initialViewportValues?.hideEverywhere ?? false
+		initialConditionStates?.hideEverywhere ?? false
 	);
 
-	const handleViewportCheckboxChange = useCallback(
-		( viewport, isChecked ) => {
-			setViewportChecked( {
-				...viewportChecked,
-				[ viewport ]: isChecked,
-			} );
+	const handleConditionChange = useCallback(
+		( conditionSlug, key, isChecked ) => {
+			setConditionStates( ( prev ) => ( {
+				...prev,
+				[ conditionSlug ]: {
+					...prev[ conditionSlug ],
+					[ key ]: isChecked,
+				},
+			} ) );
 		},
-		[ viewportChecked ]
+		[]
 	);
 
 	const noticeMessage = useMemo( () => {
@@ -130,53 +173,82 @@ export default function BlockVisibilityModal( { clientIds, onClose } ) {
 		return sprintf( message, listViewShortcut );
 	}, [ hideEverywhere, blocks?.length, listViewShortcut ] );
 
-	const isAnyViewportChecked = useMemo(
-		() =>
-			Object.values( viewportChecked ).some(
+	const isAnyConditionChecked = useMemo( () => {
+		return Object.values( conditionStates ).some( ( conditionState ) =>
+			Object.values( conditionState ).some(
 				( checked ) => checked === true || checked === null
-			),
-		[ viewportChecked ]
-	);
+			)
+		);
+	}, [ conditionStates ] );
 
 	const isDirty = useMemo( () => {
-		if ( hideEverywhere !== initialViewportValues.hideEverywhere ) {
+		if ( hideEverywhere !== initialConditionStates.hideEverywhere ) {
 			return true;
 		}
-		return BLOCK_VISIBILITY_VIEWPORT_ENTRIES.some(
-			( [ , { key } ] ) =>
-				viewportChecked[ key ] !==
-				initialViewportValues.viewportChecked[ key ]
-		);
-	}, [ hideEverywhere, viewportChecked, initialViewportValues ] );
+
+		return registeredConditions.some( ( condition ) => {
+			const currentState = conditionStates[ condition.slug ] ?? {};
+			const initialState =
+				initialConditionStates.conditionStates[ condition.slug ] ??
+				{};
+
+			return condition.options.some(
+				( { key } ) => currentState[ key ] !== initialState[ key ]
+			);
+		} );
+	}, [
+		hideEverywhere,
+		conditionStates,
+		initialConditionStates,
+		registeredConditions,
+	] );
 
 	const hasIndeterminateValues = useMemo( () => {
 		if ( hideEverywhere === null ) {
 			return true;
 		}
-		return Object.values( viewportChecked ).some(
-			( checked ) => checked === null
+
+		return Object.values( conditionStates ).some( ( conditionState ) =>
+			Object.values( conditionState ).some(
+				( checked ) => checked === null
+			)
 		);
-	}, [ hideEverywhere, viewportChecked ] );
+	}, [ hideEverywhere, conditionStates ] );
 
 	const handleSubmit = useCallback(
 		( event ) => {
 			event.preventDefault();
-			const newVisibility = hideEverywhere
-				? false
-				: {
-						viewport: BLOCK_VISIBILITY_VIEWPORT_ENTRIES.reduce(
-							( acc, [ , { key } ] ) => {
-								if ( viewportChecked[ key ] ) {
-									// Values are inverted to hide the block on the selected viewport.
-									// In the UI, the checkbox is checked (true) when the block is hidden on the selected viewport,
-									// so 'false' means hide the block on the selected viewport.
-									acc[ key ] = false;
+
+			let newVisibility;
+			if ( hideEverywhere ) {
+				newVisibility = false;
+			} else {
+				// Build metadata from all condition states.
+				newVisibility = {};
+
+				registeredConditions.forEach( ( condition ) => {
+					const state = conditionStates[ condition.slug ];
+					if ( state ) {
+						const conditionMeta = {};
+						let hasValues = false;
+
+						Object.entries( state ).forEach(
+							( [ key, checked ] ) => {
+								if ( checked === true ) {
+									// Values are inverted: checked (true) in UI means hide (false) in metadata.
+									conditionMeta[ key ] = false;
+									hasValues = true;
 								}
-								return acc;
-							},
-							{}
-						),
-				  };
+							}
+						);
+
+						if ( hasValues ) {
+							newVisibility[ condition.slug ] = conditionMeta;
+						}
+					}
+				} );
+			}
+
 			const attributesByClientId = Object.fromEntries(
 				blocks.map( ( { clientId, attributes } ) => [
 					clientId,
@@ -188,6 +260,7 @@ export default function BlockVisibilityModal( { clientIds, onClose } ) {
 					},
 				] )
 			);
+
 			updateBlockAttributes( clientIds, attributesByClientId, {
 				uniqueByBlock: true,
 			} );
@@ -208,7 +281,8 @@ export default function BlockVisibilityModal( { clientIds, onClose } ) {
 			noticeMessage,
 			onClose,
 			updateBlockAttributes,
-			viewportChecked,
+			conditionStates,
+			registeredConditions,
 		]
 	);
 
@@ -228,10 +302,10 @@ export default function BlockVisibilityModal( { clientIds, onClose } ) {
 					<legend>
 						{ hasMultipleBlocks
 							? __(
-									'Select the viewport sizes for which you want to hide the blocks. Changes will apply to all selected blocks.'
+									'Select the visibility conditions for which you want to hide the blocks. Changes will apply to all selected blocks.'
 							  )
 							: __(
-									'Select the viewport size for which you want to hide the block.'
+									'Select the visibility conditions for which you want to hide the block.'
 							  ) }
 					</legend>
 					<ul className="block-editor-block-visibility-modal__options">
@@ -243,56 +317,57 @@ export default function BlockVisibilityModal( { clientIds, onClose } ) {
 								indeterminate={ hideEverywhere === null }
 								onChange={ ( checked ) => {
 									setHideEverywhere( checked );
-									// Reset viewport checkboxes when hide everywhere is checked.
-									setViewportChecked(
-										DEFAULT_VIEWPORT_CHECKBOX_VALUES
+									// Reset all condition checkboxes when hide everywhere is checked.
+									const resetStates = {};
+									registeredConditions.forEach(
+										( condition ) => {
+											const conditionReset = {};
+											condition.options.forEach(
+												( { key } ) => {
+													conditionReset[ key ] =
+														false;
+												}
+											);
+											resetStates[ condition.slug ] =
+												conditionReset;
+										}
 									);
+									setConditionStates( resetStates );
 								} }
 							/>
 							{ hideEverywhere !== true && (
-								<ul className="block-editor-block-visibility-modal__sub-options">
-									{ BLOCK_VISIBILITY_VIEWPORT_ENTRIES.map(
-										( [ , { label, icon, key } ] ) => (
-											<li
-												key={ key }
-												className="block-editor-block-visibility-modal__options-item"
+								<>
+									{ registeredConditions.map(
+										( condition ) => (
+											<div
+												key={ condition.slug }
+												className="block-editor-block-visibility-modal__condition-section"
 											>
-												<CheckboxControl
-													label={ sprintf(
-														// translators: %s: The viewport name.
-														__( 'Hide on %s' ),
-														label
-													) }
-													checked={
-														viewportChecked[
-															key
-														] ?? false
-													}
-													indeterminate={
-														viewportChecked[
-															key
-														] === null
-													}
-													onChange={ ( checked ) =>
-														handleViewportCheckboxChange(
+												{ condition.options.length >
+													0 && (
+													<ConditionSection
+														condition={ condition }
+														state={
+															conditionStates[
+																condition.slug
+															]
+														}
+														onChange={ (
 															key,
 															checked
-														)
-													}
-												/>
-												<Icon
-													icon={ icon }
-													className={ clsx( {
-														'block-editor-block-visibility-modal__options-icon--checked':
-															viewportChecked[
-																key
-															],
-													} ) }
-												/>
-											</li>
+														) =>
+															handleConditionChange(
+																condition.slug,
+																key,
+																checked
+															)
+														}
+													/>
+												) }
+											</div>
 										)
 									) }
-								</ul>
+								</>
 							) }
 						</li>
 					</ul>
@@ -316,13 +391,13 @@ export default function BlockVisibilityModal( { clientIds, onClose } ) {
 					) }
 					{ ! hasMultipleBlocks &&
 						! hideEverywhere &&
-						isAnyViewportChecked && (
+						isAnyConditionChecked && (
 							<p className="block-editor-block-visibility-modal__description">
 								{ createInterpolateElement(
 									sprintf(
 										// translators: %s: The shortcut key to access the List View
 										__(
-											'Block will be hidden according to the selected viewports. It will be <strong>included in the published markup on the frontend</strong>. You can configure it again by selecting it in the List View (%s).'
+											'Block will be hidden according to the selected conditions. It will be <strong>included in the published markup on the frontend</strong>. You can configure it again by selecting it in the List View (%s).'
 										),
 										listViewShortcut
 									),
